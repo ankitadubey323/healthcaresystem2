@@ -349,56 +349,82 @@ const HEALTHY_TIPS = [
   },
 ]
 
-function NewsCard({ item, t, onClick }) {
+function NewsCard({ item, t, isLight, onClick }) {
   return (
     <div
       onClick={onClick}
       style={{
         minWidth: '280px', maxWidth: '280px',
-        background: t.surface, borderRadius: '26px',
-        overflow: 'hidden', boxShadow: t.shadow,
-        border: `1px solid ${t.border}`,
-        cursor: 'pointer', flexShrink: 0,
-        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+        background: isLight
+          ? 'linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,249,255,0.98))'
+          : 'linear-gradient(180deg, rgba(16,24,40,0.98), rgba(22,35,57,0.98))',
+        borderRadius: '32px',
+        overflow: 'hidden',
+        boxShadow: isLight
+          ? '0 28px 80px rgba(59,130,246,0.16)'
+          : '0 28px 80px rgba(15,23,42,0.65)',
+        border: isLight ? '1px solid rgba(255,255,255,0.55)' : '1px solid rgba(148,163,184,0.18)',
+        cursor: 'pointer',
+        flexShrink: 0,
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        position: 'relative',
+        transformStyle: 'preserve-3d',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-4px)'
-        e.currentTarget.style.boxShadow = t.shadowMd
+        e.currentTarget.style.transform = 'translateY(-8px) rotateY(1deg)'
+        e.currentTarget.style.boxShadow = isLight
+          ? '0 32px 90px rgba(59,130,246,0.24)'
+          : '0 32px 90px rgba(15,23,42,0.75)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = t.shadow
+        e.currentTarget.style.transform = 'translateY(0) rotateY(0deg)'
+        e.currentTarget.style.boxShadow = isLight
+          ? '0 28px 80px rgba(59,130,246,0.16)'
+          : '0 28px 80px rgba(15,23,42,0.65)'
       }}
     >
       <div style={{
-        height: '158px',
-        backgroundImage: `url(${item.imageUrl || item.urlToImage || 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=900&q=80'})`,
-        backgroundSize: 'cover', backgroundPosition: 'center',
-      }} />
-      <div style={{ padding: '16px 16px 18px' }}>
+        position: 'relative',
+        height: '170px',
+        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.02)), url(${item.imageUrl || item.urlToImage || 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=900&q=80'})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(circle at top left, rgba(255,255,255,0.26), transparent 40%)',
+          mixBlendMode: 'screen',
+        }} />
+      </div>
+      <div style={{ padding: '20px 18px 22px' }}>
         <span style={{
-          display: 'inline-block', marginBottom: '10px',
-          padding: '5px 10px', borderRadius: '18px',
-          background: t.surfaceAlt, color: t.textMuted,
-          fontSize: '11px', fontWeight: '700',
+          display: 'inline-block', marginBottom: '12px',
+          padding: '7px 12px', borderRadius: '999px',
+          background: isLight ? 'rgba(59,130,246,0.12)' : 'rgba(59,130,246,0.18)',
+          color: t.primary,
+          fontSize: '11px', fontWeight: '800',
+          letterSpacing: '0.08em', textTransform: 'uppercase',
         }}>
           {item.source?.name || item.source || 'Health'}
         </span>
         <h3 style={{
-          fontSize: '15px', fontWeight: '800',
-          color: t.text, lineHeight: '1.35', marginBottom: '8px',
-          whiteSpace: 'normal',
+          fontSize: '17px', fontWeight: '900',
+          color: t.text, lineHeight: '1.3', marginBottom: '10px',
         }}>
           {item.title}
         </h3>
         <p style={{
-          fontSize: '12px', color: t.textSub,
-          lineHeight: '1.6', whiteSpace: 'normal',
+          fontSize: '13px', color: t.textSub,
+          lineHeight: '1.8', minHeight: '72px', margin: 0,
           display: '-webkit-box', WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
         }}>
           {item.description || item.content || ''}
         </p>
+        <div style={{ marginTop: '18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: t.primary }} />
+          <span style={{ fontSize: '12px', fontWeight: '700', color: t.textMuted }}>Swipe for more</span>
+        </div>
       </div>
     </div>
   )
@@ -439,6 +465,7 @@ function ScrollRow({ items, t, speed = SCROLL_SPEED }) {
           key={`${item.id || item.title}-${i}`}
           item={item}
           t={t}
+          isLight={t.mode === 'light'}
           onClick={() => {
             const url = item.url
             if (url) {
@@ -487,13 +514,18 @@ export default function NewsSection() {
 
   const sectionStyle = {
     background: isLight
-      ? 'linear-gradient(180deg,rgba(248,250,255,0.95) 0%,rgba(232,240,255,0.9) 100%)'
-      : 'linear-gradient(180deg,rgba(17,24,39,0.95) 0%,rgba(15,23,42,0.96) 100%)',
+      ? 'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(235,244,255,0.92))'
+      : 'linear-gradient(135deg, rgba(15,23,42,0.96), rgba(22,33,56,0.94))',
     borderRadius: '40px',
-    border: isLight ? '1px solid rgba(102,126,234,0.14)' : '1px solid rgba(148,163,184,0.12)',
-    padding: '24px',
+    border: isLight ? '1px solid rgba(59,130,246,0.12)' : '1px solid rgba(148,163,184,0.16)',
+    padding: '28px 24px 22px',
     marginBottom: '18px',
+    boxShadow: isLight
+      ? '0 32px 90px rgba(148,163,184,0.14)'
+      : '0 32px 90px rgba(15,23,42,0.45)',
     backdropFilter: 'blur(18px)',
+    position: 'relative',
+    overflow: 'hidden',
   }
 
   const SectionHeader = ({ title, sub, action }) => (

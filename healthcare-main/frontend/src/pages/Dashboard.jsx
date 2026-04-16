@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { useChat } from '../context/ChatContext'
 import { useNavigate } from 'react-router-dom'
 import { uploadDocument, updateProfile, uploadProfilePhoto } from '../utils/api'
 import NewsSection from '../components/NewsSection'
@@ -72,6 +73,7 @@ function SectionHeader({ title, subtitle, action, t }) {
 export default function Dashboard() {
   const { user, logout, setUser } = useAuth()
   const { t, themeName, toggleTheme } = useTheme()
+  const { toggleChat } = useChat()
   const navigate = useNavigate()
   const isDesktop = useIsDesktop()
   const isLight = themeName === 'light'
@@ -446,7 +448,10 @@ export default function Dashboard() {
           boxShadow: t.shadow,
         }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div
+            onClick={toggleChat}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          >
             <span style={{ fontSize: '28px' }}>🩺</span>
             <span style={{
               fontSize: '20px', fontWeight: '900',

@@ -1,145 +1,152 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useChat } from '../context/ChatContext'
+
+const AGENT_URL = 'https://ai-agent-9-nnzd.onrender.com/'
 
 export default function DrAIWidget() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState([
-    { type: 'bot', text: '👋 Hello! I am Dr. AI. How can I help you today?' }
-  ])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { isChatOpen, openChat, closeChat, toggleChat } = useChat()
+  const [isMobile, setIsMobile] = useState(false)
 
-  const sendMessage = async () => {
-    if (!input.trim()) return
-    const userMsg = { type: 'user', text: input }
-    setMessages(prev => [...prev, userMsg])
-    setInput('')
-    setLoading(true)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
-    try {
-      const res = await fetch('https://ai-agent-9-nnzd.onrender.com/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
-      })
-      const data = await res.json()
-      const reply = data.response || data.message || 'I am here to help!'
-      setMessages(prev => [...prev, { type: 'bot', text: reply }])
-    } catch {
-      setMessages(prev => [...prev, { type: 'bot', text: '⚠️ Could not connect to Dr. AI.' }])
-    } finally {
-      setLoading(false)
-    }
+  const widgetStyle = {
+    position: 'fixed',
+    bottom: isMobile ? 0 : '20px',
+    right: isMobile ? 0 : '20px',
+    left: isMobile ? 0 : 'auto',
+    top: isMobile ? 0 : 'auto',
+    width: isMobile ? '100%' : '360px',
+    height: isMobile ? '100%' : '640px',
+    maxHeight: isMobile ? '100vh' : '640px',
+    background: 'linear-gradient(180deg, #ffffff, #eef6ff)',
+    borderRadius: isMobile ? '0' : '38px',
+    border: isMobile ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
+    boxShadow: isMobile ? 'none' : '0 30px 80px rgba(15, 23, 42, 0.16)',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    zIndex: 9999,
+  }
+
+  const headerStyle = {
+    padding: isMobile ? '18px 18px 10px' : '22px 22px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    background: isMobile ? 'rgba(255,255,255,0.92)' : 'transparent',
+    borderBottom: isMobile ? '1px solid rgba(15, 23, 42, 0.08)' : 'none',
+    backdropFilter: isMobile ? 'blur(12px)' : 'none',
   }
 
   return (
     <>
       <AnimatePresence>
-        {isOpen && (
+        {isChatOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            style={{
-              position: 'fixed', bottom: '90px', right: '24px',
-              width: '320px', height: '440px',
-              background: '#111', borderRadius: '20px',
-              border: '1px solid #222', display: 'flex',
-              flexDirection: 'column', overflow: 'hidden',
-              zIndex: 9999,
-            }}
+            initial={{ opacity: 0, y: 40, scale: isMobile ? 1 : 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 40, scale: isMobile ? 1 : 0.95 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            style={widgetStyle}
           >
-            {/* Header */}
-            <div style={{
-              background: 'linear-gradient(135deg, #00d4aa, #00a87a)',
-              padding: '14px 16px', display: 'flex',
-              alignItems: 'center', gap: '10px',
-            }}>
-              <span style={{ fontSize: '24px' }}>🩺</span>
-              <div>
-                <p style={{ color: '#000', fontWeight: '700', fontSize: '14px' }}>Dr. AI Agent</p>
-                <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '11px' }}>● Online</p>
+            <div style={headerStyle}>
+              <button
+                onClick={toggleChat}
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '18px',
+                  background: 'linear-gradient(135deg, #70c7ff, #3b82f6)',
+                  display: 'grid',
+                  placeItems: 'center',
+                  color: '#ffffff',
+                  fontSize: '26px',
+                  boxShadow: '0 12px 26px rgba(59, 130, 246, 0.22)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              >
+                🩺
+              </button>
+
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>
+                  DrAI Assistant
+                </p>
+                <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569' }}>
+                  Talk to your AI doctor.
+                </p>
               </div>
+
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={closeChat}
                 style={{
-                  marginLeft: 'auto', background: 'none',
-                  border: 'none', color: '#000', fontSize: '18px', cursor: 'pointer',
+                  marginLeft: 'auto',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(15, 23, 42, 0.08)',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                  fontSize: '18px',
+                  cursor: 'pointer',
                 }}
-              >✕</button>
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Messages */}
             <div style={{
-              flex: 1, overflowY: 'auto', padding: '12px',
-              display: 'flex', flexDirection: 'column', gap: '8px',
+              flex: 1,
+              overflow: 'hidden',
+              margin: isMobile ? '0' : '0 20px 20px',
+              borderRadius: isMobile ? '0' : '32px',
+              border: isMobile ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
             }}>
-              {messages.map((msg, i) => (
-                <div key={i} style={{
-                  alignSelf: msg.type === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  background: msg.type === 'user' ? '#00d4aa' : '#1a1a1a',
-                  color: msg.type === 'user' ? '#000' : '#fff',
-                  padding: '8px 12px', borderRadius: '12px',
-                  fontSize: '13px', lineHeight: 1.5,
-                }}>
-                  {msg.text}
-                </div>
-              ))}
-              {loading && (
-                <div style={{
-                  alignSelf: 'flex-start', background: '#1a1a1a',
-                  padding: '8px 14px', borderRadius: '12px', color: '#888',
-                }}>
-                  typing...
-                </div>
-              )}
-            </div>
-
-            {/* Input */}
-            <div style={{
-              padding: '10px 12px', borderTop: '1px solid #222',
-              display: 'flex', gap: '8px',
-            }}>
-              <input
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                placeholder="Ask Dr. AI..."
-                style={{
-                  flex: 1, border: '1px solid #333', borderRadius: '20px',
-                  padding: '8px 14px', fontSize: '13px',
-                  background: '#1a1a1a', color: '#fff', outline: 'none',
-                }}
+              <iframe
+                title="Dr. AI Agent"
+                src={AGENT_URL}
+                style={{ width: '100%', height: '100%', border: 'none' }}
               />
-              <button
-                onClick={sendMessage}
-                style={{
-                  width: '36px', height: '36px', borderRadius: '50%',
-                  background: '#00d4aa', border: 'none',
-                  cursor: 'pointer', fontSize: '16px',
-                }}
-              >→</button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Float button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(prev => !prev)}
-        style={{
-          position: 'fixed', bottom: '24px', right: '24px',
-          width: '56px', height: '56px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #00d4aa, #00a87a)',
-          border: 'none', cursor: 'pointer', fontSize: '26px',
-          zIndex: 10000, boxShadow: '0 4px 20px rgba(0,212,170,0.4)',
-        }}
-      >
-        🩺
-      </motion.button>
+      {!isChatOpen && (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={openChat}
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            width: '64px',
+            height: '64px',
+            borderRadius: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #4f46e5, #0ea5e9)',
+            color: '#ffffff',
+            fontSize: '22px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 18px 48px rgba(14, 165, 233, 0.28)',
+            zIndex: 10000,
+          }}
+        >
+          🩺
+        </motion.button>
+      )}
     </>
   )
 }

@@ -46,10 +46,19 @@ export default function Register() {
       } else {
         res = await loginUser({ email: form.email, password: form.password })
       }
+
+      if (!res?.data?.token || !res?.data?.user) {
+        throw new Error('Authentication failed. Please try again.')
+      }
+
       login(res.data.user, res.data.token)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      const networkError = err.message === 'Network Error' || !err.response
+      const message = networkError
+        ? 'Cannot connect to backend. Start the backend server and try again.'
+        : err.response?.data?.message || 'Unable to connect to server. Please start the backend.'
+      setError(message)
     } finally {
       setLoading(false)
     }
