@@ -7,6 +7,9 @@ const AGENT_URL = 'https://ai-agent-9-nnzd.onrender.com/'
 export default function DrAIWidget() {
   const { isChatOpen, openChat, closeChat, toggleChat } = useChat()
   const [isMobile, setIsMobile] = useState(false)
+  const [buttonLeft, setButtonLeft] = useState(20)
+  const [buttonTop, setButtonTop] = useState(24)
+  const [dragState, setDragState] = useState({ active: false, startX: 0, startY: 0, startLeft: 20, startTop: 24 })
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -15,8 +18,51 @@ export default function DrAIWidget() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    const handlePointerMove = (event) => {
+      if (!dragState.active) return
+      const clientX = event.clientX ?? (event.touches && event.touches[0]?.clientX)
+      const clientY = event.clientY ?? (event.touches && event.touches[0]?.clientY)
+      if (clientX == null || clientY == null) return
+
+      const deltaX = clientX - dragState.startX
+      const deltaY = clientY - dragState.startY
+      const maxLeft = Math.max(16, Math.min(window.innerWidth - 96, 360))
+      const maxTop = Math.max(16, Math.min(window.innerHeight - 96, window.innerHeight - 96))
+
+      setButtonLeft(Math.min(Math.max(dragState.startLeft + deltaX, 16), maxLeft))
+      setButtonTop(Math.min(Math.max(dragState.startTop + deltaY, 16), maxTop))
+    }
+
+    const handlePointerUp = () => {
+      if (!dragState.active) return
+      setDragState(prev => ({ ...prev, active: false }))
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  }, [dragState])
+
+  const handleDragStart = (event) => {
+    const clientX = event.clientX ?? (event.touches && event.touches[0]?.clientX)
+    const clientY = event.clientY ?? (event.touches && event.touches[0]?.clientY)
+    if (clientX == null || clientY == null) return
+    event.preventDefault()
+    setDragState({
+      active: true,
+      startX: clientX,
+      startY: clientY,
+      startLeft: buttonLeft,
+      startTop: buttonTop,
+    })
+  }
+
   const widgetStyle = {
-    position: 'fixed',
+    position: 'absolute',
     bottom: isMobile ? 0 : '20px',
     right: isMobile ? 0 : '20px',
     left: isMobile ? 0 : 'auto',
@@ -125,10 +171,11 @@ export default function DrAIWidget() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
           onClick={openChat}
+          onPointerDown={handleDragStart}
           style={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
+            position: 'absolute',
+            top: `${buttonTop}px`,
+            left: `${buttonLeft}px`,
             width: '64px',
             height: '64px',
             borderRadius: '24px',
@@ -139,9 +186,10 @@ export default function DrAIWidget() {
             color: '#ffffff',
             fontSize: '22px',
             border: 'none',
-            cursor: 'pointer',
+            cursor: dragState.active ? 'grabbing' : 'grab',
             boxShadow: '0 18px 48px rgba(14, 165, 233, 0.28)',
             zIndex: 10000,
+            touchAction: 'none',
           }}
         >
           🩺

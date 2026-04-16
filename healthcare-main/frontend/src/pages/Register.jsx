@@ -92,14 +92,16 @@ export default function Register() {
       minHeight: '100vh',
       background: t.pageBg,
       display: 'flex',
-      alignItems: 'stretch',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '24px 16px',
       position: 'relative',
     }}>
       {/* Theme toggle */}
       <button
         onClick={toggleTheme}
         style={{
-          position: 'fixed', top: '20px', right: '20px', zIndex: 100,
+          position: 'fixed', top: '16px', right: '16px', zIndex: 100,
           width: '42px', height: '42px', borderRadius: '50%',
           background: t.surface, border: `1px solid ${t.border}`,
           boxShadow: t.shadow, cursor: 'pointer',
@@ -109,86 +111,13 @@ export default function Register() {
         {isLight ? '🌙' : '☀️'}
       </button>
 
-      {/* ── LEFT PANEL (desktop only) ── */}
       <div style={{
-        flex: '0 0 46%',
-        background: t.primaryGrad,
-        display: 'none', // hidden on mobile (overridden by media class trick below)
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '60px 48px',
-        position: 'relative',
-        overflow: 'hidden',
-      }} className="register-left-panel">
-        {/* Decorative circles */}
-        <div style={{
-          position: 'absolute', top: '-80px', right: '-80px',
-          width: '300px', height: '300px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.08)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-60px', left: '-60px',
-          width: '250px', height: '250px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.06)',
-        }} />
-        <div style={{
-          position: 'absolute', top: '40%', left: '-40px',
-          width: '150px', height: '150px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.05)',
-        }} />
-
-        <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <div style={{ fontSize: '80px', marginBottom: '20px' }}>🩺</div>
-          <h1 style={{
-            fontSize: '42px', fontWeight: '900', color: '#fff',
-            marginBottom: '16px', letterSpacing: '-1px',
-          }}>
-            Health AI
-          </h1>
-          <p style={{
-            color: 'rgba(255,255,255,0.82)', fontSize: '17px',
-            lineHeight: 1.7, marginBottom: '48px', maxWidth: '320px',
-          }}>
-            Your all-in-one personal health companion. Track wellness, find hospitals, and manage your medical records.
-          </p>
-
-          {/* Feature list */}
-          {[
-            { icon: '🏥', text: 'Find nearby hospitals instantly' },
-            { icon: '💧', text: 'Track daily water intake' },
-            { icon: '🧘', text: 'Guided yoga & workout sessions' },
-            { icon: '📁', text: 'Secure medical document vault' },
-            { icon: '📰', text: 'Latest health news & updates' },
-          ].map(f => (
-            <div key={f.text} style={{
-              display: 'flex', alignItems: 'center', gap: '14px',
-              marginBottom: '14px', textAlign: 'left',
-            }}>
-              <div style={{
-                width: '38px', height: '38px', borderRadius: '12px',
-                background: 'rgba(255,255,255,0.18)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '18px', flexShrink: 0,
-              }}>
-                {f.icon}
-              </div>
-              <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', fontWeight: '500' }}>
-                {f.text}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL ── */}
-      <div style={{
-        flex: 1,
+        width: '100%',
+        maxWidth: '520px',
+        padding: '0 10px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 20px',
-        overflowY: 'auto',
       }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -196,14 +125,49 @@ export default function Register() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           style={{
             width: '100%',
-            maxWidth: '480px',
             background: t.surface,
-            borderRadius: '28px',
-            padding: 'clamp(24px, 5vw, 40px)',
+            borderRadius: '36px',
+            padding: '28px 22px',
             boxShadow: t.shadowLg,
             border: `1px solid ${t.border}`,
+            overflow: 'hidden',
           }}
         >
+          <div style={{
+            marginBottom: '24px',
+            textAlign: 'center',
+            padding: '20px 16px',
+            borderRadius: '28px',
+            background: t.primaryLight,
+          }}>
+            <div style={{
+              margin: '0 auto 14px',
+              width: '72px',
+              height: '72px',
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: '24px',
+              background: 'linear-gradient(135deg, #ff5f6d, #ff9a8b)',
+              color: '#fff',
+              fontSize: '34px',
+            }}>
+              🩺
+            </div>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '900',
+              margin: 0,
+              color: t.text,
+              lineHeight: 1.05,
+            }}>
+              {mode === 'login' ? 'Welcome Back!' : 'Health AI Sign Up'}
+            </h2>
+            <p style={{ color: t.textMuted, fontSize: '14px', marginTop: '10px' }}>
+              {mode === 'login'
+                ? 'Sign in to your mobile health AI dashboard.'
+                : 'Create your Health AI account and start your journey.'}
+            </p>
+          </div>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
             <div style={{ fontSize: '40px', marginBottom: '10px' }}>
@@ -416,12 +380,6 @@ export default function Register() {
         </motion.div>
       </div>
 
-      {/* Media query for desktop two-column layout */}
-      <style>{`
-        @media (min-width: 768px) {
-          .register-left-panel { display: flex !important; }
-        }
-      `}</style>
     </div>
   )
 }

@@ -11,17 +11,6 @@ import DocumentVault from '../components/DocumentVault'
 import WaterIntake from '../components/WaterIntake'
 import HealthFeatures from '../components/HealthFeatures'
 
-// ── Responsive hook ────────────────────────────────────────
-function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768)
-  useEffect(() => {
-    const handler = () => setIsDesktop(window.innerWidth >= 768)
-    window.addEventListener('resize', handler)
-    return () => window.removeEventListener('resize', handler)
-  }, [])
-  return isDesktop
-}
-
 // ── Section card wrapper ───────────────────────────────────
 function Card({ children, t, style = {} }) {
   return (
@@ -75,8 +64,16 @@ export default function Dashboard() {
   const { t, themeName, toggleTheme } = useTheme()
   const { toggleChat } = useChat()
   const navigate = useNavigate()
-  const isDesktop = useIsDesktop()
+  const isDesktop = false
   const isLight = themeName === 'light'
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour >= 5 && hour < 12) return 'Good Morning'
+    if (hour >= 12 && hour < 17) return 'Good Afternoon'
+    if (hour >= 17 && hour < 21) return 'Good Evening'
+    return 'Good Night'
+  }
 
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showWaterPopup, setShowWaterPopup] = useState(false)
@@ -652,7 +649,7 @@ export default function Dashboard() {
       <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoSelected} />
       <div
         style={{
-          width: '100%', maxWidth: '480px', minHeight: '100vh',
+          width: '100%', maxWidth: '520px', minHeight: '100vh',
           background: t.containerBg,
           position: 'relative', paddingBottom: '84px',
           boxShadow: '0 0 60px rgba(100,149,237,0.1)',
@@ -676,7 +673,7 @@ export default function Dashboard() {
               <div style={{ position: 'absolute', bottom: 1, right: 1, width: '11px', height: '11px', borderRadius: '50%', background: '#48bb78', border: '2px solid white' }} />
             </div>
             <div>
-              <p style={{ fontSize: '11px', color: t.textMuted, fontWeight: '500' }}>Good Morning 👋</p>
+              <p style={{ fontSize: '11px', color: t.textMuted, fontWeight: '500' }}>{getGreeting()} 👋</p>
               <p style={{ fontSize: '15px', fontWeight: '800', color: t.text }}>{user?.name || 'User'}</p>
             </div>
 
@@ -792,7 +789,7 @@ export default function Dashboard() {
         {/* Bottom nav */}
         <div style={{
           position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '100%', maxWidth: '480px',
+          width: '100%', maxWidth: '520px',
           background: t.headerBg, backdropFilter: 'blur(20px)',
           borderTop: `1px solid ${t.border}`,
           padding: '10px 8px 14px',
