@@ -1,7 +1,15 @@
 import axios from 'axios'
 
+const rawApiUrl = import.meta.env.VITE_API_URL?.trim()
+const isPlaceholder = rawApiUrl?.includes('YOUR_DEPLOYED_BACKEND_URL')
+const baseURL = rawApiUrl && !isPlaceholder ? rawApiUrl : '/api'
+
+if (isPlaceholder) {
+  console.warn('VITE_API_URL is set to a placeholder value. Falling back to /api for backend requests.')
+}
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL,
   timeout: 15000,
 })
 
