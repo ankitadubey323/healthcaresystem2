@@ -16,7 +16,6 @@ export default function Register() {
   const [mode, setMode] = useState(isLogin ? 'login' : 'register')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [showBMI, setShowBMI] = useState(false)
 
   const [form, setForm] = useState({
@@ -248,31 +247,10 @@ export default function Register() {
               </div>
 
               <div>
-  <label style={labelStyle}>Password</label>
-  <div style={{ position: 'relative' }}>
-    <input
-      style={{ ...inputStyle, paddingRight: '44px' }}
-      name="password"
-      type={showPassword ? 'text' : 'password'}
-      placeholder="••••••••"
-      value={form.password}
-      onChange={handleChange}
-      required
-    />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: 'absolute', right: '12px', top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none', border: 'none',
-                      cursor: 'pointer', fontSize: '18px',
-                      lineHeight: 1, padding: 0,
-                    }}
-                  >
-                    {showPassword ? '🙈' : '👁️'}
-                  </button>
-                </div>
+                <label style={labelStyle}>Password</label>
+                <input style={inputStyle} name="password" type="password"
+                  placeholder="••••••••" value={form.password}
+                  onChange={handleChange} required />
               </div>
 
               {mode === 'register' && (

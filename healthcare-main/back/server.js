@@ -14,36 +14,14 @@ import newsRoutes from './routes/news.js'
 
 const app = express()
 
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  'https://heathcaresystem-4.onrender.com',
-]
-
-// const allowedOrigins = [
-//   'http://localhost:5173',
-//   'http://127.0.0.1:5173',
-//   'http://localhost:3000',
-//   'http://127.0.0.1:3000',
-
-// ]
-// if (process.env.CORS_ORIGIN) {
-//   allowedOrigins.push(
-//     ...process.env.CORS_ORIGIN.split(',').map((url) => url.trim()).filter(Boolean),
-//   )
-// }
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true)
-    }
-    callback(new Error('CORS policy: Origin not allowed'))
-  },
-  credentials: true,
+    origin: [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+    ],
+    credentials: true,
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
