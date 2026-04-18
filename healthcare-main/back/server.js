@@ -20,6 +20,7 @@ app.use(cors({
       'http://127.0.0.1:5173',
       'http://localhost:3000',
       'http://127.0.0.1:3000',
+      'https://healthcaresystem2-1.onrender.com',
     ],
     credentials: true,
 }))
