@@ -10,6 +10,13 @@ export default function DrAIWidget() {
   const [buttonLeft, setButtonLeft] = useState(20)
   const [buttonTop, setButtonTop] = useState(24)
   const [dragState, setDragState] = useState({ active: false, startX: 0, startY: 0, startLeft: 20, startTop: 24 })
+  const [iframeKey, setIframeKey] = useState(0)
+
+  useEffect(() => {
+    if (isChatOpen) {
+      setIframeKey(k => k + 1)
+    }
+  }, [isChatOpen])
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -155,12 +162,34 @@ export default function DrAIWidget() {
               margin: isMobile ? '0' : '0 20px 20px',
               borderRadius: isMobile ? '0' : '32px',
               border: isMobile ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
+              position: 'relative',
             }}>
               <iframe
+                key={iframeKey}
                 title="Dr. AI Agent"
                 src={AGENT_URL}
                 style={{ width: '100%', height: '100%', border: 'none' }}
+                allow="microphone; camera; autoplay; clipboard-read; clipboard-write; fullscreen"
+                allowFullScreen
               />
+              <button
+                onClick={() => setIframeKey(k => k + 1)}
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  right: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: 'rgba(0,0,0,0.5)',
+                  color: '#fff',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  zIndex: 100,
+                }}
+              >
+                🔄
+              </button>
             </div>
           </motion.div>
         )}

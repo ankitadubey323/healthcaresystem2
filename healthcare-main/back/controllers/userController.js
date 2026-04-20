@@ -22,11 +22,13 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const { name, phone, city, state, age, weight, height } = req.body
+        const { name, phone, city, state, age, weight, height, removePhoto } = req.body
         const user = await User.findById(req.userId)
         if (!user) return res.status(404).json({ message: 'User not found' })
 
-        if (req.file) {
+        if (removePhoto === 'true' || removePhoto === true) {
+            user.profilePhoto = ''
+        } else if (req.file) {
             const result = await uploadToCloudinary(req.file.buffer, 'health-ai/profiles')
             user.profilePhoto = result.secure_url
         }

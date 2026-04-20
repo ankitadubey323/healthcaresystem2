@@ -76,6 +76,7 @@ export default function Dashboard() {
   }
 
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [showPhotoOptions, setShowPhotoOptions] = useState(false)
   const [showWaterPopup, setShowWaterPopup] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
   const [showNewsSection, setShowNewsSection] = useState(false)
@@ -92,6 +93,7 @@ export default function Dashboard() {
   const fileInputRef = useRef(null)
   const cameraInputRef = useRef(null)
   const photoInputRef = useRef(null)
+  const profileCameraRef = useRef(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setShowWaterPopup(true), 1200)
@@ -184,6 +186,16 @@ export default function Dashboard() {
 
   const handleChangePhoto = () => {
     setShowProfileMenu(false)
+    setShowPhotoOptions(true)
+  }
+
+  const openCamera = () => {
+    setShowPhotoOptions(false)
+    profileCameraRef.current?.click()
+  }
+
+  const openGallery = () => {
+    setShowPhotoOptions(false)
     photoInputRef.current?.click()
   }
 
@@ -387,6 +399,71 @@ export default function Dashboard() {
     </div>
   )
 
+  const PhotoOptionsMenu = () => (
+    <div
+      onClick={() => setShowPhotoOptions(false)}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(0,0,0,0.35)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 500, padding: '18px',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: '320px', background: t.surface,
+          borderRadius: '24px', padding: '24px', boxShadow: t.shadowLg,
+          border: `1px solid ${t.border}`,
+        }}
+      >
+        <h3 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: '800', color: t.text, textAlign: 'center' }}>
+          Change Profile Photo
+        </h3>
+        <button
+          onClick={openCamera}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '14px',
+            width: '100%', padding: '16px 20px',
+            borderRadius: '16px', border: 'none',
+            background: t.surfaceAlt, cursor: 'pointer',
+            fontSize: '16px', fontWeight: '600', color: t.text,
+            textAlign: 'left', fontFamily: 'inherit', marginBottom: '12px',
+          }}
+        >
+          <span style={{ fontSize: '26px' }}>📷</span>
+          Take Photo
+        </button>
+        <button
+          onClick={openGallery}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '14px',
+            width: '100%', padding: '16px 20px',
+            borderRadius: '16px', border: 'none',
+            background: t.surfaceAlt, cursor: 'pointer',
+            fontSize: '16px', fontWeight: '600', color: t.text,
+            textAlign: 'left', fontFamily: 'inherit',
+          }}
+        >
+          <span style={{ fontSize: '26px' }}>🖼️</span>
+          Choose from Gallery
+        </button>
+        <button
+          onClick={() => setShowPhotoOptions(false)}
+          style={{
+            width: '100%', marginTop: '14px', padding: '14px',
+            borderRadius: '14px', border: 'none',
+            background: 'transparent', cursor: 'pointer',
+            fontSize: '14px', fontWeight: '600', color: t.textMuted,
+            fontFamily: 'inherit',
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+
   // ── User Info card content (shared) ─────────────────────
   const UserCard = ({ compact = false }) => (
     <div style={{
@@ -533,6 +610,7 @@ export default function Dashboard() {
           </div>
         </header>
         <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoSelected} />
+        <input ref={profileCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handlePhotoSelected} />
 
         {/* ── BODY: Sidebar + Main ── */}
         <div style={{ display: 'flex', flex: 1, gap: 0 }}>
@@ -630,14 +708,15 @@ export default function Dashboard() {
           </main>
         </div>
 
-        {/* Water popup */}
+{/* Water popup */}
         {showProfileSettings && <ProfileSettingsModal />}
+        {showPhotoOptions && <PhotoOptionsMenu />}
         {showWaterPopup && <WaterPopup t={t} onYes={() => setShowWaterPopup(false)} onNo={() => setShowWaterPopup(false)} />}
       </div>
     )
   }
 
-  // ════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
   // MOBILE LAYOUT
   // ════════════════════════════════════════════════════════
   return (
@@ -647,6 +726,7 @@ export default function Dashboard() {
       display: 'flex', justifyContent: 'center',
     }}>
       <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoSelected} />
+      <input ref={profileCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handlePhotoSelected} />
       <div
         style={{
           width: '100%', maxWidth: '520px', minHeight: '100vh',
@@ -779,11 +859,80 @@ export default function Dashboard() {
           </div>
 
           {/* Documents */}
-          <div style={{ padding: '16px 18px 28px' }}>
-            <Card t={t}>
-              <DocumentVault />
-            </Card>
-          </div>
+          {activeTab !== 'profile' && (
+            <div style={{ padding: '16px 18px 28px' }}>
+              <Card t={t}>
+                <DocumentVault />
+              </Card>
+            </div>
+          )}
+
+          {/* Profile Tab Content */}
+          {activeTab === 'profile' && (
+            <div style={{ padding: '16px 18px 28px' }}>
+              <Card t={t}>
+                <SectionHeader title="My Profile" subtitle="Account" t={t} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <Avatar size={64} />
+                  <div>
+                    <p style={{ fontSize: '18px', fontWeight: '800', color: t.text, margin: 0 }}>
+                      {user?.name || 'User'}
+                    </p>
+                    <p style={{ fontSize: '13px', color: t.textMuted, marginTop: '4px' }}>
+                      📍 {[user?.city, user?.state].filter(Boolean).join(', ') || 'Location not set'}
+                    </p>
+                    {user?.phone && (
+                      <p style={{ fontSize: '13px', color: t.textMuted, marginTop: '2px' }}>
+                        📱 {user.phone}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <button
+                    onClick={() => { setShowProfileSettings(true); setShowProfileMenu(false) }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '16px', borderRadius: '16px', border: 'none',
+                      background: t.surfaceAlt, cursor: 'pointer',
+                      fontSize: '15px', fontWeight: '600', color: t.text,
+                      textAlign: 'left', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: '22px' }}>✏️</span>
+                    <span>Edit your details</span>
+                  </button>
+                  <button
+                    onClick={handleChangePhoto}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '16px', borderRadius: '16px', border: 'none',
+                      background: t.surfaceAlt, cursor: 'pointer',
+                      fontSize: '15px', fontWeight: '600', color: t.text,
+                      textAlign: 'left', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: '22px' }}>🖼️</span>
+                    <span>Change photo</span>
+                  </button>
+                  <div style={{ height: '1px', background: t.border, margin: '4px 0' }} />
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '16px', borderRadius: '16px', border: 'none',
+                      background: t.surfaceAlt, cursor: 'pointer',
+                      fontSize: '15px', fontWeight: '600', color: t.error,
+                      textAlign: 'left', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: '22px' }}>🚪</span>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
 
         {/* Bottom nav */}
@@ -824,6 +973,7 @@ export default function Dashboard() {
         </div>
 
         {showProfileSettings && <ProfileSettingsModal />}
+        {showPhotoOptions && <PhotoOptionsMenu />}
         {showWaterPopup && <WaterPopup t={t} onYes={() => setShowWaterPopup(false)} onNo={() => setShowWaterPopup(false)} />}
       </div>
 
