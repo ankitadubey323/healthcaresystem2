@@ -203,7 +203,7 @@ export default function Dashboard() {
     }
   }
 
-  // ✅ FIXED: FormData use karo taaki removePhoto string 'true' jaye backend mein
+  // ✅ FIXED: FormData use karo — removePhoto string 'true' jata hai backend mein
   const handleRemovePhoto = async () => {
     setShowProfileMenu(false)
     setShowPhotoOptions(false)
@@ -414,7 +414,6 @@ export default function Dashboard() {
           Change Profile Photo
         </h3>
 
-        {/* ✅ CAMERA - label trick mobile pe kaam karta hai */}
         <label
           htmlFor="profile-camera-input"
           style={{
@@ -445,7 +444,6 @@ export default function Dashboard() {
           onChange={handlePhotoSelected}
         />
 
-        {/* GALLERY */}
         <label
           htmlFor="profile-gallery-input"
           style={{
@@ -475,7 +473,6 @@ export default function Dashboard() {
           onChange={handlePhotoSelected}
         />
 
-        {/* ✅ REMOVE PHOTO - sirf tab dikhega jab photo ho */}
         {user?.profilePhoto && (
           <button
             onClick={handleRemovePhoto}

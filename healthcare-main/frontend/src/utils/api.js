@@ -14,7 +14,14 @@ API.interceptors.request.use((req) => {
 export const registerUser = (formData) => API.post('/auth/register', formData)
 export const loginUser = (data) => API.post('/auth/login', data)
 export const getProfile = () => API.get('/user/profile')
-export const updateProfile = (data) => API.put('/user/update', data)
+// export const updateProfile = (data) => API.put('/user/update', data)
+export const updateProfile = (data) => {
+  const formData = new FormData()
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) formData.append(key, value)
+  })
+  return API.put('/user/update', formData)
+}
 export const uploadProfilePhoto = (formData) => API.put('/user/update', formData)
 export const calculateBMI = (data) => API.post('/user/bmi', data)
 // export const getNearbyHospitals = (lat, lon) => API.get(`/hospital/nearby?lat=${lat}&lon=${lon}`)
