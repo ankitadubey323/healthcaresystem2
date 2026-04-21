@@ -24,17 +24,31 @@ function Modal({ onClose, grad, title, subtitle, children }) {
           position: 'relative', flexShrink: 0,
         }}>
           <button onClick={onClose} style={{
-            position: 'absolute', top: '16px', right: '16px',
-            width: '32px', height: '32px', borderRadius: '50%',
-            background: 'rgba(255,255,255,0.25)', border: 'none',
-            color: '#fff', fontSize: '16px', cursor: 'pointer',
+            position: 'absolute', top: '14px', right: '14px',
+            width: '36px', height: '36px', borderRadius: '10px',
+            background: 'rgba(255,255,255,0.25)', border: '2px solid rgba(255,255,255,0.5)',
+            color: '#ffffff', fontSize: '22px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'inherit',
+            lineHeight: 1,
+            fontWeight: '500',
+            padding: 0,
+            zIndex: 100,
           }}>✕</button>
           <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800' }}>{title}</h2>
           <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: '13px', marginTop: '4px' }}>{subtitle}</p>
         </div>
         <div style={{ overflowY: 'auto', padding: '20px', flex: 1 }}>{children}</div>
+        <div style={{ padding: '16px', borderTop: `1px solid ${t.border}` }}>
+          <button onClick={onClose} style={{
+            width: '100%', padding: '14px', borderRadius: '14px',
+            background: t.surfaceAlt, border: `1px solid ${t.border}`,
+            color: t.text, fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            ✕ Close
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -43,6 +57,8 @@ function Modal({ onClose, grad, title, subtitle, children }) {
 // ── Workout Modal ─────────────────────────────────────────
 function WorkoutModal({ duration, setDuration, onClose }) {
   const { t } = useTheme()
+  const [selectedTime, setSelectedTime] = useState('06:00')
+  const timeSlots = ['06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM']
   const videos = [
     { title: 'Full Body Warm-Up', url: 'https://www.youtube.com/embed/R0mMyV5OtcM', duration: '5 min' },
     { title: 'Morning Cardio Blast', url: 'https://www.youtube.com/embed/ml6cT4AZdqI', duration: '10 min' },
@@ -50,8 +66,25 @@ function WorkoutModal({ duration, setDuration, onClose }) {
     { title: 'Stretching & Cool Down', url: 'https://www.youtube.com/embed/g_tea8ZNk5A', duration: '5 min' },
   ]
   return (
-    <Modal onClose={onClose} title="🏃 Morning Workout" subtitle="Set your session duration"
+    <Modal onClose={onClose} title="🏃 Morning Workout" subtitle="Set your session time and duration"
       grad="linear-gradient(135deg, #f093fb, #f5576c)">
+      <p style={{ fontSize: '12px', fontWeight: '700', color: t.textMuted, marginBottom: '10px', letterSpacing: '0.5px' }}>
+        SESSION TIME
+      </p>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        {timeSlots.map(time => (
+          <button key={time} onClick={() => setSelectedTime(time)} style={{
+            padding: '8px 14px', borderRadius: '20px', border: 'none',
+            background: selectedTime === time ? 'linear-gradient(135deg, #f093fb, #f5576c)' : t.surfaceAlt,
+            color: selectedTime === time ? '#fff' : t.textSub,
+            fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+            boxShadow: selectedTime === time ? '0 4px 12px rgba(240,147,251,0.4)' : 'none',
+            fontFamily: 'inherit',
+          }}>
+            {time}
+          </button>
+        ))}
+      </div>
       <p style={{ fontSize: '12px', fontWeight: '700', color: t.textMuted, marginBottom: '10px', letterSpacing: '0.5px' }}>
         SESSION DURATION
       </p>
@@ -218,6 +251,8 @@ function YogaModal({ onClose }) {
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState('')
+  const [selectedTime, setSelectedTime] = useState('06:00 AM')
+  const timeSlots = ['06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM']
 
   useEffect(() => {
     let active = true
@@ -259,8 +294,24 @@ function YogaModal({ onClose }) {
   })
 
   return (
-    <Modal onClose={onClose} title="🧘 Yoga & Pranayama" subtitle="Wikipedia-powered yoga sessions with images and videos"
+    <Modal onClose={onClose} title="🧘 Yoga & Pranayama" subtitle="Select time and explore yoga sessions"
       grad="linear-gradient(135deg, #4facfe, #00f2fe)">
+      <p style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)', marginBottom: '10px', letterSpacing: '0.5px' }}>
+        SESSION TIME
+      </p>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        {timeSlots.map(time => (
+          <button key={time} onClick={() => setSelectedTime(time)} style={{
+            padding: '8px 14px', borderRadius: '20px', border: 'none',
+            background: selectedTime === time ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+            color: '#fff', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+            boxShadow: selectedTime === time ? '0 4px 12px rgba(255,255,255,0.2)' : 'none',
+            fontFamily: 'inherit',
+          }}>
+            {time}
+          </button>
+        ))}
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '18px' }}>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {[

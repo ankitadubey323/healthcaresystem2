@@ -457,21 +457,23 @@ export default function Register() {
 
   const inputStyle = {
     width: '100%',
-    padding: '12px 16px',
+    padding: '14px 16px',
     borderRadius: '12px',
-    border: `1.5px solid ${t.inputBorder}`,
-    background: t.inputBg,
+    border: `1px solid ${t.inputBorder}`,
+    background: t.surface,
     color: t.inputText,
     fontSize: '14px',
     outline: 'none',
     fontFamily: 'inherit',
+    transition: 'all 0.2s ease',
+    boxShadow: t.shadow,
   }
 
   const labelStyle = {
-    fontSize: '12px',
+    fontSize: '13px',
     fontWeight: '600',
     color: t.textMuted,
-    marginBottom: '5px',
+    marginBottom: '8px',
     display: 'block',
     letterSpacing: '0.3px',
   }
@@ -485,16 +487,53 @@ export default function Register() {
       alignItems: 'center',
       padding: '24px 16px',
       position: 'relative',
+      overflow: 'hidden',
     }}>
-      {/* Theme toggle */}
+      {/* Gradient background layers */}
+      <div style={{
+        position: 'absolute',
+        top: '-30%',
+        left: '-20%',
+        width: '600px',
+        height: '600px',
+        borderRadius: '50%',
+        background: t.gradientBlob1,
+        filter: 'blur(120px)',
+        opacity: 0.8,
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '-25%',
+        right: '-20%',
+        width: '500px',
+        height: '500px',
+        borderRadius: '50%',
+        background: t.gradientBlob2,
+        filter: 'blur(100px)',
+        opacity: 0.6,
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '40%',
+        left: '30%',
+        width: '300px',
+        height: '300px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(79,70,229,0.06) 0%, transparent 70%)',
+        filter: 'blur(60px)',
+      }} />
+
+      {/* Theme toggle - floating with glass effect */}
       <button
         onClick={toggleTheme}
         style={{
-          position: 'fixed', top: '16px', right: '16px', zIndex: 100,
-          width: '42px', height: '42px', borderRadius: '50%',
-          background: t.surface, border: `1px solid ${t.border}`,
-          boxShadow: t.shadow, cursor: 'pointer',
+          position: 'fixed', top: '20px', right: '20px', zIndex: 100,
+          width: '44px', height: '44px', borderRadius: '14px',
+          background: t.glass, border: `1px solid ${t.glassBorder}`,
+          boxShadow: t.shadowMd, cursor: 'pointer',
           fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(12px)',
+          transition: 'all 0.2s ease',
         }}
       >
         {isLight ? '🌙' : '☀️'}
@@ -502,56 +541,62 @@ export default function Register() {
 
       <div style={{
         width: '100%',
-        maxWidth: '520px',
+        maxWidth: '440px',
         padding: '0 10px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative',
+        zIndex: 1,
       }}>
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{
             width: '100%',
-            background: t.surface,
-            borderRadius: '36px',
-            padding: '28px 22px',
-            boxShadow: t.shadowLg,
-            border: `1px solid ${t.border}`,
+            background: t.glass,
+            borderRadius: '24px',
+            padding: '36px 32px',
+            boxShadow: t.shadowXl,
+            border: `1px solid ${t.glassBorder}`,
             overflow: 'hidden',
+            backdropFilter: 'blur(20px)',
           }}
         >
           <div style={{
-            marginBottom: '24px',
+            marginBottom: '28px',
             textAlign: 'center',
-            padding: '20px 16px',
-            borderRadius: '28px',
+            padding: '24px 20px',
+            borderRadius: '20px',
             background: t.primaryLight,
           }}>
             <div style={{
-              margin: '0 auto 14px',
-              width: '72px',
-              height: '72px',
+              margin: '0 auto 16px',
+              width: '64px',
+              height: '64px',
               display: 'grid',
               placeItems: 'center',
-              borderRadius: '24px',
-              background: 'linear-gradient(135deg, #ff5f6d, #ff9a8b)',
+              borderRadius: '20px',
+              background: t.primaryGrad,
               color: '#fff',
-              fontSize: '34px',
+              fontSize: '28px',
+              boxShadow: '0 8px 24px rgba(79,70,229,0.35)',
             }}>
               🩺
             </div>
             <h2 style={{
-              fontSize: '24px',
-              fontWeight: '900',
+              fontSize: '26px',
+              fontWeight: '800',
               margin: 0,
-              color: t.text,
-              lineHeight: 1.05,
+              background: t.primaryGrad,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: 1.15,
             }}>
               {mode === 'login' ? 'Welcome Back!' : 'Health AI Sign Up'}
             </h2>
-            <p style={{ color: t.textMuted, fontSize: '14px', marginTop: '10px' }}>
+            <p style={{ color: t.textMuted, fontSize: '14px', marginTop: '8px' }}>
               {mode === 'login'
                 ? 'Sign in to your mobile health AI dashboard.'
                 : 'Create your Health AI account and start your journey.'}
@@ -559,13 +604,13 @@ export default function Register() {
           </div>
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ fontSize: '40px', marginBottom: '10px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <div style={{ fontSize: '36px', marginBottom: '8px' }}>
               {mode === 'login' ? '👋' : '✨'}
             </div>
             <h2 style={{
-              fontSize: '26px', fontWeight: '800', color: t.text,
-              marginBottom: '6px', letterSpacing: '-0.5px',
+              fontSize: '24px', fontWeight: '700', color: t.text,
+              marginBottom: '4px', letterSpacing: '-0.3px',
             }}>
               {mode === 'login' ? 'Welcome Back!' : 'Create Account'}
             </h2>
@@ -580,7 +625,7 @@ export default function Register() {
           <div style={{
             display: 'flex',
             background: t.surfaceAlt,
-            borderRadius: '14px',
+            borderRadius: '12px',
             padding: '4px',
             marginBottom: '24px',
             border: `1px solid ${t.border}`,
@@ -590,17 +635,17 @@ export default function Register() {
                 key={m}
                 onClick={() => setMode(m)}
                 style={{
-                  flex: 1, padding: '10px',
+                  flex: 1, padding: '12px 16px',
                   borderRadius: '10px', border: 'none',
                   background: mode === m ? t.primaryGrad : 'transparent',
                   color: mode === m ? '#fff' : t.textMuted,
-                  fontWeight: '700', cursor: 'pointer', fontSize: '13px',
-                  boxShadow: mode === m ? '0 4px 12px rgba(102,126,234,0.35)' : 'none',
+                  fontWeight: '600', cursor: 'pointer', fontSize: '13px',
+                  boxShadow: mode === m ? '0 4px 14px rgba(79,70,229,0.35)' : 'none',
                   transition: 'all 0.2s ease',
                   fontFamily: 'inherit',
                 }}
               >
-                {m === 'login' ? '🔑 Login' : '📝 Register'}
+                {m === 'login' ? 'Sign In' : 'Register'}
               </button>
             ))}
           </div>
@@ -739,10 +784,16 @@ export default function Register() {
                         <span style={{ color: t.textMuted, fontSize: '13px' }}>Camera</span>
                       </label>
                     </div>
-                    {profilePhoto && (
-                      <p style={{ fontSize: '12px', color: t.textMuted, marginTop: '6px' }}>
-                        ✅ {profilePhoto.name}
-                      </p>
+                    {profilePhoto ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', padding: '14px 16px', background: 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.06))', borderRadius: '14px', border: `2px solid ${t.success}` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontSize: '24px' }}>✅</span>
+                          <span style={{ fontSize: '13px', color: t.text, fontWeight: '600' }}>{profilePhoto.name}</span>
+                        </div>
+                        <button type="button" onClick={() => setProfilePhoto(null)} style={{ background: '#EF4444', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#FFFFFF', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', minWidth: '70px' }}>✕ Remove</button>
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: '10px', padding: '14px', textAlign: 'center', color: t.textMuted, fontSize: '13px' }}>No photo selected</div>
                     )}
                     <input id="profilePhoto" type="file" accept="image/*"
                       onChange={e => setProfilePhoto(e.target.files[0])}
@@ -767,6 +818,17 @@ export default function Register() {
                         {aadhaar ? aadhaar.name : 'Click to upload PDF or image'}
                       </span>
                     </label>
+                    {aadhaar ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', padding: '14px 16px', background: 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.06))', borderRadius: '14px', border: `2px solid ${t.success}` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontSize: '24px' }}>✅</span>
+                          <span style={{ fontSize: '13px', color: t.text, fontWeight: '600' }}>{aadhaar.name}</span>
+                        </div>
+                        <button type="button" onClick={() => setAadhaar(null)} style={{ background: '#EF4444', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#FFFFFF', padding: '8px 16px', borderRadius: '10px', fontWeight: '700', minWidth: '70px' }}>✕ Remove</button>
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: '10px', padding: '14px', textAlign: 'center', color: t.textMuted, fontSize: '13px' }}>No document selected</div>
+                    )}
                     <input id="aadhaar" type="file" accept="image/*,.pdf"
                       onChange={e => setAadhaar(e.target.files[0])}
                       style={{ display: 'none' }} />
@@ -777,23 +839,24 @@ export default function Register() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                whileHover={!loading ? { scale: 1.02 } : {}}
-                whileTap={!loading ? { scale: 0.98 } : {}}
+                whileHover={!loading ? { scale: 1.01 } : {}}
+                whileTap={!loading ? { scale: 0.99 } : {}}
                 style={{
-                  padding: '14px',
-                  borderRadius: '14px', border: 'none',
+                  padding: '16px',
+                  borderRadius: '12px', border: 'none',
                   background: loading ? t.surfaceAlt : t.primaryGrad,
                   color: loading ? t.textMuted : '#fff',
-                  fontWeight: '700', fontSize: '15px',
+                  fontWeight: '600', fontSize: '15px',
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  marginTop: '6px',
-                  boxShadow: loading ? 'none' : '0 6px 20px rgba(102,126,234,0.4)',
+                  marginTop: '8px',
+                  boxShadow: loading ? 'none' : '0 8px 24px rgba(79,70,229,0.35)',
                   fontFamily: 'inherit',
+                  transition: 'all 0.2s ease',
                 }}
               >
                 {loading
-                  ? '⏳ Please wait...'
-                  : mode === 'login' ? '🔑 Login to Dashboard' : '✨ Create My Account'}
+                  ? 'Please wait...'
+                  : mode === 'login' ? 'Sign In to Dashboard' : 'Create My Account'}
               </motion.button>
 
               <p style={{ textAlign: 'center', fontSize: '13px', color: t.textMuted, marginTop: '4px' }}>

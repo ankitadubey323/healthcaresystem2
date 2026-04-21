@@ -450,6 +450,18 @@ function ScrollRow({ items, t, speed = SCROLL_SPEED }) {
 
   const doubled = [...items, ...items]
 
+  const handleNewsClick = (e, item) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const newsUrl = item.url || item.urlToImage
+    if (newsUrl && newsUrl.startsWith('http')) {
+      window.open(newsUrl, '_blank')
+    } else {
+      window.location.href = `/dashboard/news/${encodeURIComponent(item.title || 'news')}`
+    }
+  }
+
   return (
     <div
       ref={scrollRef}
@@ -466,18 +478,7 @@ function ScrollRow({ items, t, speed = SCROLL_SPEED }) {
           item={item}
           t={t}
           isLight={t.mode === 'light'}
-          onClick={() => {
-            const url = item.url
-            if (url) {
-              const a = document.createElement('a')
-              a.href = url
-              a.target = '_blank'
-              a.rel = 'noopener noreferrer'
-              document.body.appendChild(a)
-              a.click()
-              document.body.removeChild(a)
-            }
-          }}
+          onClick={(e) => handleNewsClick(e, item)}
         />
       ))}
     </div>
