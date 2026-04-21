@@ -3,6 +3,47 @@ import nodemailer from 'nodemailer'
 import User from '../models/User.js'
 import cloudinary from '../config/cloudinary.js'
 
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
+
+const sendSMS = async (phone, message) => {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID
+  const authToken = process.env.TWILIO_AUTH_TOKEN
+  const twilioPhone = process.env.TWILIO_PHONE_NUMBER
+
+  if (!accountSid || !authToken || !twilioPhone) {
+    console.warn('SMS not configured: missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN or TWILIO_PHONE_NUMBER')
+    return false
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
+        },
+        body: new URLSearchParams({
+          To: phone,
+          From: twilioPhone,
+          Body: message,
+        }),
+      }
+    )
+    const data = await response.json()
+    if (data.sid) {
+      console.log(`SMS sent to ${phone}`)
+      return true
+    }
+    console.error('Twilio error:', data.message)
+    return false
+  } catch (err) {
+    console.error('Failed to send SMS:', err.message)
+    return false
+  }
+}
+
 const uploadToCloudinary = (buffer, folder) => {
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
@@ -68,6 +109,59 @@ const sendWelcomeEmail = async ({ email, name }) => {
   } catch (err) {
     console.error('Failed to send welcome email:', err.message)
     return false
+  }
+}
+
+export const sendOTP = async (req, res) => {
+  try {
+    const { phone } = req.body
+    if (!phone) return res.status(400).json({ message: 'Phone number is required' })
+
+    const user = await User.findOne({ phone })
+    if (!user) return res.status(404).json({ message: 'Phone number not registered' })
+
+    const otp = generateOTP()
+    const expires = new Date(Date.now() + 10 * 60 * 1000)
+
+    user.verificationOTP = otp
+    user.verificationExpires = expires
+    await user.save()
+
+    const smsSent = await sendSMS(phone, `Your Health AI verification code is: ${otp}. Valid for 10 minutes.`)
+    if (!smsSent) return res.status(500).json({ message: 'Failed to send OTP via SMS' })
+
+    res.json({ message: 'OTP sent successfully' })
+  } catch (err) {
+    console.error('SEND OTP ERROR:', err)
+    res.status(500).json({ message: err.message })
+  }
+}
+
+export const verifyOTP = async (req, res) => {
+  try {
+    const { phone, otp } = req.body
+    if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP are required' })
+
+    const user = await User.findOne({ phone })
+    if (!user) return res.status(404).json({ message: 'Phone number not registered' })
+
+    if (!user.verificationOTP || user.verificationOTP !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' })
+    }
+
+    if (!user.verificationExpires || new Date() > user.verificationExpires) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' })
+    }
+
+    user.isPhoneVerified = true
+    user.verificationOTP = ''
+    user.verificationExpires = null
+    await user.save()
+
+    res.json({ message: 'Phone verified successfully' })
+  } catch (err) {
+    console.error('VERIFY OTP ERROR:', err)
+    res.status(500).json({ message: err.message })
   }
 }
 
