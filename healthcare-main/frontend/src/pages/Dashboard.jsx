@@ -203,10 +203,16 @@ export default function Dashboard() {
     }
   }
 
+  // ✅ FIXED: FormData use karo taaki removePhoto string 'true' jaye backend mein
   const handleRemovePhoto = async () => {
     setShowProfileMenu(false)
+    setShowPhotoOptions(false)
+    setProfileError('')
+    setProfileMessage('')
     try {
-      const { data } = await updateProfile({ removePhoto: true })
+      const formData = new FormData()
+      formData.append('removePhoto', 'true')
+      const { data } = await updateProfile(formData)
       setUser(data.user)
       localStorage.setItem('user', JSON.stringify(data.user))
       setProfileMessage('Profile photo removed.')
@@ -380,7 +386,6 @@ export default function Dashboard() {
     </div>
   )
 
-  // ── ✅ FIXED: PhotoOptionsMenu — label trick for mobile camera ──────────────
   const PhotoOptionsMenu = () => (
     <div
       onClick={() => setShowPhotoOptions(false)}
@@ -403,27 +408,20 @@ export default function Dashboard() {
           animation: 'slideUp 0.3s ease',
         }}
       >
-        <div style={{
-          width: '40px', height: '4px', borderRadius: '2px',
-          background: t.border, margin: '0 auto 24px',
-        }} />
+        <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: t.border, margin: '0 auto 24px' }} />
 
-        <h3 style={{
-          margin: '0 0 20px', fontSize: '18px', fontWeight: '800',
-          color: t.text, textAlign: 'center',
-        }}>
+        <h3 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: '800', color: t.text, textAlign: 'center' }}>
           Change Profile Photo
         </h3>
 
-        {/* ✅ CAMERA — label wraps hidden input directly, mobile mein kaam karega */}
+        {/* ✅ CAMERA - label trick mobile pe kaam karta hai */}
         <label
           htmlFor="profile-camera-input"
           style={{
             display: 'flex', alignItems: 'center', gap: '16px',
             width: '100%', padding: '18px 20px',
-            borderRadius: '18px', border: 'none',
+            borderRadius: '18px',
             background: t.surfaceAlt, cursor: 'pointer',
-            fontSize: '16px', fontWeight: '600', color: t.text,
             marginBottom: '12px', boxSizing: 'border-box',
           }}
         >
@@ -438,7 +436,6 @@ export default function Dashboard() {
             <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '2px' }}>Open camera directly</div>
           </div>
         </label>
-        {/* ✅ KEY FIX: input directly in DOM with capture="user" for front camera */}
         <input
           id="profile-camera-input"
           type="file"
@@ -448,16 +445,15 @@ export default function Dashboard() {
           onChange={handlePhotoSelected}
         />
 
-        {/* GALLERY — label trick bhi use karo consistency ke liye */}
+        {/* GALLERY */}
         <label
           htmlFor="profile-gallery-input"
           style={{
             display: 'flex', alignItems: 'center', gap: '16px',
             width: '100%', padding: '18px 20px',
-            borderRadius: '18px', border: 'none',
+            borderRadius: '18px',
             background: t.surfaceAlt, cursor: 'pointer',
-            fontSize: '16px', fontWeight: '600', color: t.text,
-            marginBottom: '4px', boxSizing: 'border-box',
+            marginBottom: '12px', boxSizing: 'border-box',
           }}
         >
           <span style={{
@@ -478,6 +474,32 @@ export default function Dashboard() {
           style={{ display: 'none' }}
           onChange={handlePhotoSelected}
         />
+
+        {/* ✅ REMOVE PHOTO - sirf tab dikhega jab photo ho */}
+        {user?.profilePhoto && (
+          <button
+            onClick={handleRemovePhoto}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '16px',
+              width: '100%', padding: '18px 20px',
+              borderRadius: '18px', border: 'none',
+              background: 'rgba(239,68,68,0.08)', cursor: 'pointer',
+              marginBottom: '4px', boxSizing: 'border-box',
+              fontFamily: 'inherit',
+            }}
+          >
+            <span style={{
+              width: '48px', height: '48px', borderRadius: '14px',
+              background: 'linear-gradient(135deg, #f6546a, #e53e3e)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '24px', flexShrink: 0,
+            }}>🗑️</span>
+            <div>
+              <div style={{ fontWeight: '700', fontSize: '15px', color: '#dc2626' }}>Remove Photo</div>
+              <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '2px' }}>Delete current photo</div>
+            </div>
+          </button>
+        )}
 
         <button
           onClick={() => setShowPhotoOptions(false)}
@@ -632,7 +654,6 @@ export default function Dashboard() {
     )
   }
 
-  // ── MOBILE LAYOUT ─────────────────────────────────────────
   return (
     <div style={{ minHeight: '100vh', background: t.pageBg, display: 'flex', justifyContent: 'center' }}>
       <div
@@ -644,7 +665,6 @@ export default function Dashboard() {
         }}
         onClick={() => { setShowProfileMenu(false); setShowUploadMenu(false) }}
       >
-        {/* Header */}
         <div style={{
           padding: '16px 18px 14px',
           background: t.headerBg, backdropFilter: 'blur(20px)',
@@ -693,7 +713,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Content */}
         <div style={{ overflowY: 'auto' }}>
           <div style={{ padding: '20px 18px 0' }}><ActionRow /></div>
 
@@ -732,7 +751,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Bottom nav */}
         <div style={{
           position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
           width: '100%', maxWidth: '520px',
@@ -824,3 +842,4 @@ function WaterPopup({ t, onYes, onNo }) {
     </div>
   )
 }
+

@@ -15,9 +15,6 @@ const userSchema = new mongoose.Schema({
     bmi: { type: Number },
     profilePhoto: { type: String, default: '' },
     aadhaarUrl: { type: String, default: '' },
-    verificationOTP: { type: String, default: '' },
-    verificationExpires: { type: Date, default: null },
-    isPhoneVerified: { type: Boolean, default: false },
 }, { timestamps: true })
 
 // Auto hash password

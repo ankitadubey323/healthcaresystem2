@@ -13,8 +13,6 @@ API.interceptors.request.use((req) => {
 
 export const registerUser = (formData) => API.post('/auth/register', formData)
 export const loginUser = (data) => API.post('/auth/login', data)
-export const sendRegisterOTP = (phone) => API.post('/auth/send-register-otp', { phone })
-export const verifyRegisterOTP = (phone, otp) => API.post('/auth/verify-register-otp', { phone, otp })
 export const getProfile = () => API.get('/user/profile')
 export const updateProfile = (data) => API.put('/user/update', data)
 export const uploadProfilePhoto = (formData) => API.put('/user/update', formData)

@@ -391,7 +391,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
-import { registerUser, loginUser, sendRegisterOTP, verifyRegisterOTP } from '../utils/api'
+import { registerUser, loginUser } from '../utils/api'
 import BMICalculator from '../components/BMICalculator'
 
 export default function Register() {
@@ -414,45 +414,8 @@ export default function Register() {
   })
   const [profilePhoto, setProfilePhoto] = useState(null)
   const [aadhaar, setAadhaar] = useState(null)
-  const [phoneVerified, setPhoneVerified] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [otp, setOtp] = useState('')
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
-
-  const handleSendOTP = async () => {
-    if (!form.phone) {
-      setError('Please enter phone number first')
-      return
-    }
-    setLoading(true)
-    setError('')
-    try {
-      await sendRegisterOTP(form.phone)
-      setOtpSent(true)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleVerifyOTP = async () => {
-    if (!otp) {
-      setError('Please enter OTP')
-      return
-    }
-    setLoading(true)
-    setError('')
-    try {
-      await verifyRegisterOTP(form.phone, otp)
-      setPhoneVerified(true)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid OTP')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleBMICalculated = (bmi, weight, height) =>
     setForm(prev => ({ ...prev, bmi, weight, height }))
@@ -464,11 +427,6 @@ export default function Register() {
     try {
       let res
       if (mode === 'register') {
-        if (form.phone && !phoneVerified) {
-          setLoading(false)
-          setError('Please verify your phone number first')
-          return
-        }
         const fd = new FormData()
         Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v) })
         if (profilePhoto) fd.append('profilePhoto', profilePhoto)
@@ -712,82 +670,8 @@ export default function Register() {
                   <div>
                     <label style={labelStyle}>Phone Number</label>
                     <input style={inputStyle} name="phone" placeholder="+91 9876543210"
-                      value={form.phone} onChange={handleChange} disabled={phoneVerified} />
+                      value={form.phone} onChange={handleChange} />
                   </div>
-
-                  {mode === 'register' && !phoneVerified && (
-                    <div>
-                      {!otpSent ? (
-                        <button
-                          type="button"
-                          onClick={handleSendOTP}
-                          disabled={loading || !form.phone}
-                          style={{
-                            width: '100%', padding: '12px',
-                            borderRadius: '12px', border: 'none',
-                            background: t.primaryGrad, color: '#fff',
-                            fontWeight: '700', fontSize: '14px',
-                            cursor: loading || !form.phone ? 'not-allowed' : 'pointer',
-                            fontFamily: 'inherit',
-                          }}
-                        >
-                          {loading ? 'Sending OTP...' : '📱 Verify Phone'}
-                        </button>
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          <input
-                            style={inputStyle}
-                            placeholder="Enter 6-digit OTP"
-                            value={otp}
-                            onChange={e => setOtp(e.target.value)}
-                            maxLength={6}
-                          />
-                          <div style={{ display: 'flex', gap: '10px' }}>
-                            <button
-                              type="button"
-                              onClick={handleVerifyOTP}
-                              disabled={loading || otp.length !== 6}
-                              style={{
-                                flex: 1, padding: '12px',
-                                borderRadius: '12px', border: 'none',
-                                background: t.primaryGrad, color: '#fff',
-                                fontWeight: '700', fontSize: '14px',
-                                cursor: loading || otp.length !== 6 ? 'not-allowed' : 'pointer',
-                                fontFamily: 'inherit',
-                              }}
-                            >
-                              {loading ? 'Verifying...' : '✓ Verify OTP'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={handleSendOTP}
-                              disabled={loading}
-                              style={{
-                                flex: 1, padding: '12px',
-                                borderRadius: '12px', border: `1.5px solid ${t.border}`,
-                                background: 'transparent', color: t.textMuted,
-                                fontWeight: '600', fontSize: '14px',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                                fontFamily: 'inherit',
-                              }}
-                            >
-                              Resend OTP
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {phoneVerified && (
-                    <div style={{
-                      padding: '12px', borderRadius: '12px',
-                      background: '#dcfce7', border: '1.5px solid #22c55e',
-                      color: '#166534', fontSize: '13px', fontWeight: '600',
-                    }}>
-                      ✅ Phone verified successfully
-                    </div>
-                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
@@ -898,10 +782,10 @@ export default function Register() {
                 style={{
                   padding: '14px',
                   borderRadius: '14px', border: 'none',
-                  background: loading || (mode === 'register' && form.phone && !phoneVerified) ? t.surfaceAlt : t.primaryGrad,
-                  color: loading || (mode === 'register' && form.phone && !phoneVerified) ? t.textMuted : '#fff',
+                  background: loading ? t.surfaceAlt : t.primaryGrad,
+                  color: loading ? t.textMuted : '#fff',
                   fontWeight: '700', fontSize: '15px',
-                  cursor: loading || (mode === 'register' && form.phone && !phoneVerified) ? 'not-allowed' : 'pointer',
+                  cursor: loading ? 'not-allowed' : 'pointer',
                   marginTop: '6px',
                   boxShadow: loading ? 'none' : '0 6px 20px rgba(102,126,234,0.4)',
                   fontFamily: 'inherit',
