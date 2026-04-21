@@ -11,7 +11,6 @@ import DocumentVault from '../components/DocumentVault'
 import WaterIntake from '../components/WaterIntake'
 import HealthFeatures from '../components/HealthFeatures'
 
-// ── Section card wrapper ───────────────────────────────────
 function Card({ children, t, style = {} }) {
   return (
     <div style={{
@@ -58,7 +57,6 @@ function SectionHeader({ title, subtitle, action, t }) {
   )
 }
 
-// ══════════════════════════════════════════════════════════
 export default function Dashboard() {
   const { user, logout, setUser } = useAuth()
   const { t, themeName, toggleTheme } = useTheme()
@@ -138,7 +136,6 @@ export default function Dashboard() {
     )
   )
 
-  // ── Action Row (shared mobile + desktop) ───────────────
   const handleUploadFile = async (file) => {
     if (!file) return
     try {
@@ -155,9 +152,7 @@ export default function Dashboard() {
 
   const onSelectUploadFile = async (event) => {
     const selected = event.target.files?.[0]
-    if (selected) {
-      await handleUploadFile(selected)
-    }
+    if (selected) await handleUploadFile(selected)
     event.target.value = ''
   }
 
@@ -170,7 +165,6 @@ export default function Dashboard() {
     setProfileSaving(true)
     setProfileError('')
     setProfileMessage('')
-
     try {
       const { data } = await updateProfile(profileForm)
       setUser(data.user)
@@ -189,23 +183,12 @@ export default function Dashboard() {
     setShowPhotoOptions(true)
   }
 
-  const openCamera = () => {
-    setShowPhotoOptions(false)
-    profileCameraRef.current?.click()
-  }
-
-  const openGallery = () => {
-    setShowPhotoOptions(false)
-    photoInputRef.current?.click()
-  }
-
   const handlePhotoSelected = async (event) => {
     const file = event.target.files?.[0]
     if (!file) return
-
+    setShowPhotoOptions(false)
     setProfileError('')
     setProfileMessage('')
-
     try {
       const formData = new FormData()
       formData.append('profilePhoto', file)
@@ -217,6 +200,18 @@ export default function Dashboard() {
       setProfileError(err?.response?.data?.message || err.message || 'Failed to update photo')
     } finally {
       event.target.value = ''
+    }
+  }
+
+  const handleRemovePhoto = async () => {
+    setShowProfileMenu(false)
+    try {
+      const { data } = await updateProfile({ removePhoto: true })
+      setUser(data.user)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      setProfileMessage('Profile photo removed.')
+    } catch (err) {
+      setProfileError(err?.response?.data?.message || 'Failed to remove photo')
     }
   }
 
@@ -235,7 +230,6 @@ export default function Dashboard() {
 
   const ActionRow = () => (
     <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-      {/* News */}
       <button
         onClick={e => { e.stopPropagation(); setShowNewsSection(v => !v); setShowUploadMenu(false) }}
         style={{
@@ -249,15 +243,10 @@ export default function Dashboard() {
         }}
       >
         <span style={{ fontSize: '28px' }}>📰</span>
-        <span style={{ fontSize: '13px', fontWeight: '700', color: showNewsSection ? '#fff' : t.primary }}>
-          Health News
-        </span>
-        <span style={{ fontSize: '11px', color: showNewsSection ? 'rgba(255,255,255,0.75)' : t.textMuted }}>
-          Latest updates
-        </span>
+        <span style={{ fontSize: '13px', fontWeight: '700', color: showNewsSection ? '#fff' : t.primary }}>Health News</span>
+        <span style={{ fontSize: '11px', color: showNewsSection ? 'rgba(255,255,255,0.75)' : t.textMuted }}>Latest updates</span>
       </button>
 
-      {/* Upload Docs */}
       <div style={{ flex: '1 1 140px', minWidth: 0, position: 'relative' }}>
         <button
           onClick={e => { e.stopPropagation(); setShowUploadMenu(v => !v); setShowNewsSection(false) }}
@@ -270,24 +259,17 @@ export default function Dashboard() {
           }}
         >
           <span style={{ fontSize: '28px' }}>📁</span>
-          <span style={{ fontSize: '13px', fontWeight: '700', color: showUploadMenu ? '#fff' : '#f5576c' }}>
-            Upload Docs
-          </span>
-          <span style={{ fontSize: '11px', color: showUploadMenu ? 'rgba(255,255,255,0.75)' : t.textMuted }}>
-            Files & photos
-          </span>
+          <span style={{ fontSize: '13px', fontWeight: '700', color: showUploadMenu ? '#fff' : '#f5576c' }}>Upload Docs</span>
+          <span style={{ fontSize: '11px', color: showUploadMenu ? 'rgba(255,255,255,0.75)' : t.textMuted }}>Files & photos</span>
         </button>
 
         {showUploadMenu && (
           <div onClick={e => e.stopPropagation()} style={{
             position: 'absolute', top: 'calc(100% + 10px)',
             right: 0, left: 0,
-            background: t.surface,
-            borderRadius: '18px',
-            boxShadow: t.shadowMd,
-            padding: '10px', zIndex: 200,
-            border: `1px solid ${t.border}`,
-            minWidth: '180px',
+            background: t.surface, borderRadius: '18px',
+            boxShadow: t.shadowMd, padding: '10px', zIndex: 200,
+            border: `1px solid ${t.border}`, minWidth: '180px',
           }}>
             <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: 'none' }} onChange={onSelectUploadFile} />
             <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={onSelectUploadFile} />
@@ -325,8 +307,7 @@ export default function Dashboard() {
         position: 'fixed', inset: 0,
         background: 'rgba(0,0,0,0.35)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 500,
-        padding: '18px',
+        zIndex: 500, padding: '18px',
       }}
     >
       <div
@@ -367,7 +348,7 @@ export default function Dashboard() {
               City
               <input value={profileForm.city} onChange={e => handleProfileInput('city', e.target.value)} style={modalInputStyle(t)} />
             </label>
-            <label style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '13px', color: t.text }}>
+            <label style={{ display: 'grid', gap: '6px', fontSize: '13px', color: t.text }}>
               State
               <input value={profileForm.state} onChange={e => handleProfileInput('state', e.target.value)} style={modalInputStyle(t)} />
             </label>
@@ -399,62 +380,112 @@ export default function Dashboard() {
     </div>
   )
 
+  // ── ✅ FIXED: PhotoOptionsMenu — label trick for mobile camera ──────────────
   const PhotoOptionsMenu = () => (
     <div
       onClick={() => setShowPhotoOptions(false)}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.35)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 500, padding: '18px',
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        zIndex: 600, padding: '0',
       }}
     >
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%', maxWidth: '320px', background: t.surface,
-          borderRadius: '24px', padding: '24px', boxShadow: t.shadowLg,
+          width: '100%', maxWidth: '520px',
+          background: t.surface,
+          borderRadius: '28px 28px 0 0',
+          padding: '28px 20px 40px',
+          boxShadow: t.shadowLg,
           border: `1px solid ${t.border}`,
+          animation: 'slideUp 0.3s ease',
         }}
       >
-        <h3 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: '800', color: t.text, textAlign: 'center' }}>
+        <div style={{
+          width: '40px', height: '4px', borderRadius: '2px',
+          background: t.border, margin: '0 auto 24px',
+        }} />
+
+        <h3 style={{
+          margin: '0 0 20px', fontSize: '18px', fontWeight: '800',
+          color: t.text, textAlign: 'center',
+        }}>
           Change Profile Photo
         </h3>
-        <button
-          onClick={openCamera}
+
+        {/* ✅ CAMERA — label wraps hidden input directly, mobile mein kaam karega */}
+        <label
+          htmlFor="profile-camera-input"
           style={{
-            display: 'flex', alignItems: 'center', gap: '14px',
-            width: '100%', padding: '16px 20px',
-            borderRadius: '16px', border: 'none',
+            display: 'flex', alignItems: 'center', gap: '16px',
+            width: '100%', padding: '18px 20px',
+            borderRadius: '18px', border: 'none',
             background: t.surfaceAlt, cursor: 'pointer',
             fontSize: '16px', fontWeight: '600', color: t.text,
-            textAlign: 'left', fontFamily: 'inherit', marginBottom: '12px',
+            marginBottom: '12px', boxSizing: 'border-box',
           }}
         >
-          <span style={{ fontSize: '26px' }}>📷</span>
-          Take Photo
-        </button>
-        <button
-          onClick={openGallery}
+          <span style={{
+            width: '48px', height: '48px', borderRadius: '14px',
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px', flexShrink: 0,
+          }}>📷</span>
+          <div>
+            <div style={{ fontWeight: '700', fontSize: '15px', color: t.text }}>Take Photo</div>
+            <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '2px' }}>Open camera directly</div>
+          </div>
+        </label>
+        {/* ✅ KEY FIX: input directly in DOM with capture="user" for front camera */}
+        <input
+          id="profile-camera-input"
+          type="file"
+          accept="image/*"
+          capture="user"
+          style={{ display: 'none' }}
+          onChange={handlePhotoSelected}
+        />
+
+        {/* GALLERY — label trick bhi use karo consistency ke liye */}
+        <label
+          htmlFor="profile-gallery-input"
           style={{
-            display: 'flex', alignItems: 'center', gap: '14px',
-            width: '100%', padding: '16px 20px',
-            borderRadius: '16px', border: 'none',
+            display: 'flex', alignItems: 'center', gap: '16px',
+            width: '100%', padding: '18px 20px',
+            borderRadius: '18px', border: 'none',
             background: t.surfaceAlt, cursor: 'pointer',
             fontSize: '16px', fontWeight: '600', color: t.text,
-            textAlign: 'left', fontFamily: 'inherit',
+            marginBottom: '4px', boxSizing: 'border-box',
           }}
         >
-          <span style={{ fontSize: '26px' }}>🖼️</span>
-          Choose from Gallery
-        </button>
+          <span style={{
+            width: '48px', height: '48px', borderRadius: '14px',
+            background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px', flexShrink: 0,
+          }}>🖼️</span>
+          <div>
+            <div style={{ fontWeight: '700', fontSize: '15px', color: t.text }}>Choose from Gallery</div>
+            <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '2px' }}>Pick from your photos</div>
+          </div>
+        </label>
+        <input
+          id="profile-gallery-input"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handlePhotoSelected}
+        />
+
         <button
           onClick={() => setShowPhotoOptions(false)}
           style={{
-            width: '100%', marginTop: '14px', padding: '14px',
-            borderRadius: '14px', border: 'none',
+            width: '100%', marginTop: '16px', padding: '16px',
+            borderRadius: '16px', border: 'none',
             background: 'transparent', cursor: 'pointer',
-            fontSize: '14px', fontWeight: '600', color: t.textMuted,
+            fontSize: '15px', fontWeight: '600', color: t.textMuted,
             fontFamily: 'inherit',
           }}
         >
@@ -464,7 +495,6 @@ export default function Dashboard() {
     </div>
   )
 
-  // ── User Info card content (shared) ─────────────────────
   const UserCard = ({ compact = false }) => (
     <div style={{
       background: t.primaryGrad,
@@ -475,7 +505,6 @@ export default function Dashboard() {
     }}>
       <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
       <div style={{ position: 'absolute', bottom: '-30px', right: '50px', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative' }}>
         <Avatar size={compact ? 56 : 64} />
         <div>
@@ -496,112 +525,48 @@ export default function Dashboard() {
     </div>
   )
 
-  // ════════════════════════════════════════════════════════
-  // DESKTOP LAYOUT
-  // ════════════════════════════════════════════════════════
   if (isDesktop) {
     return (
       <div
         onClick={() => { setShowProfileMenu(false); setShowUploadMenu(false) }}
-        style={{
-          minHeight: '100vh',
-          background: t.pageBg,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+        style={{ minHeight: '100vh', background: t.pageBg, display: 'flex', flexDirection: 'column' }}
       >
-        {/* ── TOP HEADER ── */}
         <header style={{
-          background: t.headerBg,
-          backdropFilter: 'blur(20px)',
+          background: t.headerBg, backdropFilter: 'blur(20px)',
           borderBottom: `1px solid ${t.border}`,
-          padding: '0 40px',
-          height: '68px',
+          padding: '0 40px', height: '68px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          position: 'sticky', top: 0, zIndex: 100,
-          boxShadow: t.shadow,
+          position: 'sticky', top: 0, zIndex: 100, boxShadow: t.shadow,
         }}>
-          {/* Logo */}
-          <div
-            onClick={toggleChat}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
-          >
+          <div onClick={toggleChat} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
             <span style={{ fontSize: '28px' }}>🩺</span>
-            <span style={{
-              fontSize: '20px', fontWeight: '900',
-              background: t.primaryGrad,
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.5px',
-            }}>
+            <span style={{ fontSize: '20px', fontWeight: '900', background: t.primaryGrad, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
               Health AI
             </span>
           </div>
-
-          {/* Right controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {/* Theme toggle */}
-            <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              background: t.surfaceAlt, border: `1px solid ${t.border}`,
-              cursor: 'pointer', fontSize: '18px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: t.shadow,
-            }}>
+            <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{ width: '40px', height: '40px', borderRadius: '50%', background: t.surfaceAlt, border: `1px solid ${t.border}`, cursor: 'pointer', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: t.shadow }}>
               {isLight ? '🌙' : '☀️'}
             </button>
-
-            {/* Bell */}
             <div onClick={e => { e.stopPropagation(); setNotifications(0) }} style={{ position: 'relative', cursor: 'pointer' }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '50%',
-                background: t.surfaceAlt, border: `1px solid ${t.border}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '18px', boxShadow: t.shadow,
-              }}>
-                🔔
-              </div>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: t.surfaceAlt, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: t.shadow }}>🔔</div>
               {notifications > 0 && (
-                <div style={{
-                  position: 'absolute', top: '-2px', right: '-2px',
-                  background: 'linear-gradient(135deg, #f6546a, #e53e3e)',
-                  color: '#fff', borderRadius: '50%',
-                  width: '18px', height: '18px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '10px', fontWeight: '700', border: '2px solid white',
-                }}>
+                <div style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'linear-gradient(135deg, #f6546a, #e53e3e)', color: '#fff', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', border: '2px solid white' }}>
                   {notifications}
                 </div>
               )}
             </div>
-
-            {/* Profile */}
             <div style={{ position: 'relative' }}>
-              <div
-                onClick={e => { e.stopPropagation(); setShowProfileMenu(v => !v) }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '10px',
-                  padding: '6px 14px 6px 8px', borderRadius: '40px',
-                  background: t.surfaceAlt, border: `1px solid ${t.border}`,
-                  cursor: 'pointer', boxShadow: t.shadow,
-                }}
-              >
+              <div onClick={e => { e.stopPropagation(); setShowProfileMenu(v => !v) }} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 14px 6px 8px', borderRadius: '40px', background: t.surfaceAlt, border: `1px solid ${t.border}`, cursor: 'pointer', boxShadow: t.shadow }}>
                 <Avatar size={34} />
-                <span style={{ fontSize: '14px', fontWeight: '600', color: t.text }}>
-                  {user?.name?.split(' ')[0] || 'User'}
-                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: t.text }}>{user?.name?.split(' ')[0] || 'User'}</span>
                 <span style={{ color: t.textMuted, fontSize: '12px' }}>▾</span>
               </div>
-
               {showProfileMenu && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 10px)', right: 0,
-                  background: t.surface, borderRadius: '18px',
-                  boxShadow: t.shadowMd, padding: '8px',
-                  minWidth: '180px', zIndex: 300,
-                  border: `1px solid ${t.border}`,
-                }}>
+                <div style={{ position: 'absolute', top: 'calc(100% + 10px)', right: 0, background: t.surface, borderRadius: '18px', boxShadow: t.shadowMd, padding: '8px', minWidth: '180px', zIndex: 300, border: `1px solid ${t.border}` }}>
                   <DropBtn onClick={() => { setShowProfileMenu(false); setShowProfileSettings(true) }} t={t}>✏️  Edit your details</DropBtn>
                   <DropBtn onClick={handleChangePhoto} t={t}>🖼️  Change photo</DropBtn>
+                  {user?.profilePhoto && <DropBtn onClick={handleRemovePhoto} t={t} danger>🗑️  Remove photo</DropBtn>}
                   <div style={{ height: '1px', background: t.border, margin: '4px 0' }} />
                   <DropBtn onClick={handleLogout} t={t} danger>🚪  Logout</DropBtn>
                 </div>
@@ -609,106 +574,41 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
-        <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoSelected} />
-        <input ref={profileCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handlePhotoSelected} />
 
-        {/* ── BODY: Sidebar + Main ── */}
         <div style={{ display: 'flex', flex: 1, gap: 0 }}>
-
-          {/* Sidebar */}
-          <aside style={{
-            width: '260px', flexShrink: 0,
-            background: t.sidebarBg,
-            backdropFilter: 'blur(20px)',
-            borderRight: `1px solid ${t.border}`,
-            padding: '28px 16px',
-            display: 'flex', flexDirection: 'column', gap: '28px',
-            position: 'sticky', top: '68px',
-            height: 'calc(100vh - 68px)',
-            overflowY: 'auto',
-          }}>
-            {/* User card */}
+          <aside style={{ width: '260px', flexShrink: 0, background: t.sidebarBg, backdropFilter: 'blur(20px)', borderRight: `1px solid ${t.border}`, padding: '28px 16px', display: 'flex', flexDirection: 'column', gap: '28px', position: 'sticky', top: '68px', height: 'calc(100vh - 68px)', overflowY: 'auto' }}>
             <UserCard compact />
-
-            {/* Water intake */}
             <WaterIntake />
-
-            {/* Sidebar nav */}
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {[
-                { id: 'home',      icon: '🏠', label: 'Home' },
-                { id: 'health',    icon: '❤️', label: 'Health Features' },
+                { id: 'home', icon: '🏠', label: 'Home' },
+                { id: 'health', icon: '❤️', label: 'Health Features' },
                 { id: 'hospitals', icon: '🏥', label: 'Hospitals' },
                 { id: 'documents', icon: '📁', label: 'My Documents' },
               ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '12px',
-                    padding: '11px 14px', borderRadius: '14px', border: 'none',
-                    background: activeTab === tab.id ? t.navActive : 'transparent',
-                    color: activeTab === tab.id ? t.primary : t.textSub,
-                    fontWeight: activeTab === tab.id ? '700' : '500',
-                    fontSize: '14px', cursor: 'pointer', textAlign: 'left',
-                    fontFamily: 'inherit',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px', borderRadius: '14px', border: 'none', background: activeTab === tab.id ? t.navActive : 'transparent', color: activeTab === tab.id ? t.primary : t.textSub, fontWeight: activeTab === tab.id ? '700' : '500', fontSize: '14px', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s ease' }}>
                   <span style={{ fontSize: '18px' }}>{tab.icon}</span>
                   {tab.label}
-                  {activeTab === tab.id && (
-                    <div style={{ marginLeft: 'auto', width: '6px', height: '6px', borderRadius: '50%', background: t.primary }} />
-                  )}
+                  {activeTab === tab.id && <div style={{ marginLeft: 'auto', width: '6px', height: '6px', borderRadius: '50%', background: t.primary }} />}
                 </button>
               ))}
             </nav>
           </aside>
 
-          {/* Main content */}
-          <main style={{
-            flex: 1, padding: '32px', overflowY: 'auto',
-            display: 'flex', flexDirection: 'column', gap: '24px',
-          }}>
-
-            {/* Top action row + vital rate chart */}
+          <main style={{ flex: 1, padding: '32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px', alignItems: 'start' }}>
-              <Card t={t}>
-                <SectionHeader title="Quick actions" subtitle="Dashboard" t={t} />
-                <ActionRow />
-              </Card>
-
-              <Card t={t}>
-                <SectionHeader title="India birth vs death rate" subtitle="Vital rates" t={t} />
-                <RateChart />
-              </Card>
+              <Card t={t}><SectionHeader title="Quick actions" subtitle="Dashboard" t={t} /><ActionRow /></Card>
+              <Card t={t}><SectionHeader title="India birth vs death rate" subtitle="Vital rates" t={t} /><RateChart /></Card>
             </div>
-
-            {/* News section */}
-            <Card t={t}>
-              <NewsSection />
-            </Card>
-
-            {/* Health features */}
-            <Card t={t}>
-              <SectionHeader title="Health features" subtitle="Wellness" t={t} />
-              <HealthFeatures />
-            </Card>
-
-            {/* Hospitals + Documents side by side */}
+            {showNewsSection && <Card t={t}><SectionHeader title="Health updates" subtitle="Insights" t={t} /><NewsSection /></Card>}
+            <Card t={t}><SectionHeader title="Health features" subtitle="Wellness" t={t} /><HealthFeatures /></Card>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', alignItems: 'start' }}>
-              <Card t={t}>
-                <HospitalList />
-              </Card>
-              <Card t={t}>
-                <DocumentVault refreshKey={docRefreshKey} />
-              </Card>
+              <Card t={t}><HospitalList /></Card>
+              <Card t={t}><DocumentVault refreshKey={docRefreshKey} /></Card>
             </div>
-
           </main>
         </div>
 
-{/* Water popup */}
         {showProfileSettings && <ProfileSettingsModal />}
         {showPhotoOptions && <PhotoOptionsMenu />}
         {showWaterPopup && <WaterPopup t={t} onYes={() => setShowWaterPopup(false)} onNo={() => setShowWaterPopup(false)} />}
@@ -716,17 +616,25 @@ export default function Dashboard() {
     )
   }
 
-  // ══════════════════════════════════════════════════════════
-  // MOBILE LAYOUT
-  // ════════════════════════════════════════════════════════
+  function DropBtn({ children, onClick, t, danger }) {
+    return (
+      <button onClick={onClick} style={{
+        display: 'flex', alignItems: 'center', gap: '8px',
+        width: '100%', padding: '10px 14px',
+        borderRadius: '12px', border: 'none',
+        background: 'none', cursor: 'pointer',
+        fontSize: '13px', fontWeight: '600',
+        color: danger ? t.error : t.text,
+        textAlign: 'left', fontFamily: 'inherit',
+      }}>
+        {children}
+      </button>
+    )
+  }
+
+  // ── MOBILE LAYOUT ─────────────────────────────────────────
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: t.pageBg,
-      display: 'flex', justifyContent: 'center',
-    }}>
-      <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoSelected} />
-      <input ref={profileCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handlePhotoSelected} />
+    <div style={{ minHeight: '100vh', background: t.pageBg, display: 'flex', justifyContent: 'center' }}>
       <div
         style={{
           width: '100%', maxWidth: '520px', minHeight: '100vh',
@@ -739,14 +647,11 @@ export default function Dashboard() {
         {/* Header */}
         <div style={{
           padding: '16px 18px 14px',
-          background: t.headerBg,
-          backdropFilter: 'blur(20px)',
+          background: t.headerBg, backdropFilter: 'blur(20px)',
           borderBottom: `1px solid ${t.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          position: 'sticky', top: 0, zIndex: 100,
-          boxShadow: t.shadow,
+          position: 'sticky', top: 0, zIndex: 100, boxShadow: t.shadow,
         }}>
-          {/* Profile + name */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
             <div onClick={e => { e.stopPropagation(); setShowProfileMenu(v => !v) }} style={{ position: 'relative', cursor: 'pointer' }}>
               <Avatar size={44} />
@@ -766,40 +671,21 @@ export default function Dashboard() {
               }}>
                 <DropBtn onClick={() => { setShowProfileMenu(false); setShowProfileSettings(true) }} t={t}>✏️  Edit your details</DropBtn>
                 <DropBtn onClick={handleChangePhoto} t={t}>🖼️  Change photo</DropBtn>
+                {user?.profilePhoto && <DropBtn onClick={handleRemovePhoto} t={t} danger>🗑️  Remove photo</DropBtn>}
                 <div style={{ height: '1px', background: t.border, margin: '4px 0' }} />
                 <DropBtn onClick={handleLogout} t={t} danger>🚪  Logout</DropBtn>
               </div>
             )}
           </div>
 
-          {/* Right controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{
-              width: '38px', height: '38px', borderRadius: '50%',
-              background: t.surfaceAlt, border: `1px solid ${t.border}`,
-              cursor: 'pointer', fontSize: '16px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+            <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{ width: '38px', height: '38px', borderRadius: '50%', background: t.surfaceAlt, border: `1px solid ${t.border}`, cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {isLight ? '🌙' : '☀️'}
             </button>
-
             <div onClick={e => { e.stopPropagation(); setNotifications(0) }} style={{ position: 'relative', cursor: 'pointer' }}>
-              <div style={{
-                width: '38px', height: '38px', borderRadius: '50%',
-                background: t.surfaceAlt, border: `1px solid ${t.border}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-              }}>
-                🔔
-              </div>
+              <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: t.surfaceAlt, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🔔</div>
               {notifications > 0 && (
-                <div style={{
-                  position: 'absolute', top: '-2px', right: '-2px',
-                  background: 'linear-gradient(135deg, #f6546a, #e53e3e)',
-                  color: '#fff', borderRadius: '50%',
-                  width: '17px', height: '17px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '9px', fontWeight: '700', border: '2px solid white',
-                }}>
+                <div style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'linear-gradient(135deg, #f6546a, #e53e3e)', color: '#fff', borderRadius: '50%', width: '17px', height: '17px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', border: '2px solid white' }}>
                   {notifications}
                 </div>
               )}
@@ -807,15 +693,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Scrollable content */}
+        {/* Content */}
         <div style={{ overflowY: 'auto' }}>
+          <div style={{ padding: '20px 18px 0' }}><ActionRow /></div>
 
-          {/* Action row */}
-          <div style={{ padding: '20px 18px 0' }}>
-            <ActionRow />
-          </div>
-
-          {/* Birth/Death rate chart */}
           <div style={{ padding: '16px 18px 0' }}>
             <Card t={t} style={{ minHeight: '420px' }}>
               <SectionHeader title="India birth vs death rate" subtitle="Vital rates" t={t} />
@@ -823,7 +704,6 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* News */}
           {showNewsSection && (
             <div style={{ paddingTop: '16px' }}>
               <Card t={t}>
@@ -833,17 +713,9 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* User card */}
-          <div style={{ padding: '16px 18px 0' }}>
-            <UserCard />
-          </div>
+          <div style={{ padding: '16px 18px 0' }}><UserCard /></div>
+          <div style={{ padding: '16px 18px 0' }}><WaterIntake /></div>
 
-          {/* Water */}
-          <div style={{ padding: '16px 18px 0' }}>
-            <WaterIntake />
-          </div>
-
-          {/* Health Features */}
           <div style={{ padding: '16px 18px 0' }}>
             <Card t={t}>
               <SectionHeader title="Health features" subtitle="Wellness" t={t} />
@@ -851,88 +723,13 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Hospitals */}
           <div style={{ padding: '16px 18px 0' }}>
-            <Card t={t}>
-              <HospitalList />
-            </Card>
+            <Card t={t}><HospitalList /></Card>
           </div>
 
-          {/* Documents */}
-          {activeTab !== 'profile' && (
-            <div style={{ padding: '16px 18px 28px' }}>
-              <Card t={t}>
-                <DocumentVault />
-              </Card>
-            </div>
-          )}
-
-          {/* Profile Tab Content */}
-          {activeTab === 'profile' && (
-            <div style={{ padding: '16px 18px 28px' }}>
-              <Card t={t}>
-                <SectionHeader title="My Profile" subtitle="Account" t={t} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                  <Avatar size={64} />
-                  <div>
-                    <p style={{ fontSize: '18px', fontWeight: '800', color: t.text, margin: 0 }}>
-                      {user?.name || 'User'}
-                    </p>
-                    <p style={{ fontSize: '13px', color: t.textMuted, marginTop: '4px' }}>
-                      📍 {[user?.city, user?.state].filter(Boolean).join(', ') || 'Location not set'}
-                    </p>
-                    {user?.phone && (
-                      <p style={{ fontSize: '13px', color: t.textMuted, marginTop: '2px' }}>
-                        📱 {user.phone}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <button
-                    onClick={() => { setShowProfileSettings(true); setShowProfileMenu(false) }}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '16px', borderRadius: '16px', border: 'none',
-                      background: t.surfaceAlt, cursor: 'pointer',
-                      fontSize: '15px', fontWeight: '600', color: t.text,
-                      textAlign: 'left', fontFamily: 'inherit',
-                    }}
-                  >
-                    <span style={{ fontSize: '22px' }}>✏️</span>
-                    <span>Edit your details</span>
-                  </button>
-                  <button
-                    onClick={handleChangePhoto}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '16px', borderRadius: '16px', border: 'none',
-                      background: t.surfaceAlt, cursor: 'pointer',
-                      fontSize: '15px', fontWeight: '600', color: t.text,
-                      textAlign: 'left', fontFamily: 'inherit',
-                    }}
-                  >
-                    <span style={{ fontSize: '22px' }}>🖼️</span>
-                    <span>Change photo</span>
-                  </button>
-                  <div style={{ height: '1px', background: t.border, margin: '4px 0' }} />
-                  <button
-                    onClick={handleLogout}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '16px', borderRadius: '16px', border: 'none',
-                      background: t.surfaceAlt, cursor: 'pointer',
-                      fontSize: '15px', fontWeight: '600', color: t.error,
-                      textAlign: 'left', fontFamily: 'inherit',
-                    }}
-                  >
-                    <span style={{ fontSize: '22px' }}>🚪</span>
-                    <span>Logout</span>
-                  </button>
-                </div>
-              </Card>
-            </div>
-          )}
+          <div style={{ padding: '16px 18px 28px' }}>
+            <Card t={t}><DocumentVault refreshKey={docRefreshKey} /></Card>
+          </div>
         </div>
 
         {/* Bottom nav */}
@@ -955,19 +752,13 @@ export default function Dashboard() {
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
               background: activeTab === tab.id ? t.navActive : 'none',
               border: 'none', cursor: 'pointer',
-              padding: '6px 14px', borderRadius: '14px',
-              fontFamily: 'inherit',
+              padding: '6px 14px', borderRadius: '14px', fontFamily: 'inherit',
             }}>
               <span style={{ fontSize: '22px', lineHeight: 1 }}>{tab.icon}</span>
-              <span style={{
-                fontSize: '10px', fontWeight: activeTab === tab.id ? '700' : '500',
-                color: activeTab === tab.id ? t.navActiveDot : t.textLight,
-              }}>
+              <span style={{ fontSize: '10px', fontWeight: activeTab === tab.id ? '700' : '500', color: activeTab === tab.id ? t.navActiveDot : t.textLight }}>
                 {tab.label}
               </span>
-              {activeTab === tab.id && (
-                <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: t.navActiveDot, marginTop: '-2px' }} />
-              )}
+              {activeTab === tab.id && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: t.navActiveDot, marginTop: '-2px' }} />}
             </button>
           ))}
         </div>
@@ -985,7 +776,6 @@ export default function Dashboard() {
   )
 }
 
-// ── Shared sub-components ──────────────────────────────────
 function DropBtn({ children, onClick, t, danger }) {
   return (
     <button onClick={onClick} style={{
@@ -1006,8 +796,7 @@ function WaterPopup({ t, onYes, onNo }) {
   return (
     <div style={{
       position: 'fixed', inset: 0,
-      background: 'rgba(0,0,0,0.45)',
-      backdropFilter: 'blur(6px)',
+      background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 400, padding: '20px',
     }}>
@@ -1019,29 +808,15 @@ function WaterPopup({ t, onYes, onNo }) {
         border: `1px solid ${t.border}`,
       }}>
         <div style={{ fontSize: '52px', marginBottom: '12px' }}>💧</div>
-        <h3 style={{ fontSize: '20px', fontWeight: '800', color: t.text, marginBottom: '8px' }}>
-          Stay Hydrated!
-        </h3>
+        <h3 style={{ fontSize: '20px', fontWeight: '800', color: t.text, marginBottom: '8px' }}>Stay Hydrated!</h3>
         <p style={{ color: t.textSub, fontSize: '14px', lineHeight: 1.6, marginBottom: '24px' }}>
           Did you drink water in the last hour?
         </p>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={onYes} style={{
-            flex: 1, padding: '14px', borderRadius: '16px', border: 'none',
-            background: 'linear-gradient(135deg, #43e97b, #38f9d7)',
-            color: '#fff', fontWeight: '700', fontSize: '15px',
-            cursor: 'pointer', boxShadow: '0 6px 20px rgba(67,233,123,0.4)',
-            fontFamily: 'inherit',
-          }}>
+          <button onClick={onYes} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'linear-gradient(135deg, #43e97b, #38f9d7)', color: '#fff', fontWeight: '700', fontSize: '15px', cursor: 'pointer', boxShadow: '0 6px 20px rgba(67,233,123,0.4)', fontFamily: 'inherit' }}>
             ✅ Yes!
           </button>
-          <button onClick={onNo} style={{
-            flex: 1, padding: '14px', borderRadius: '16px',
-            border: `2px solid ${t.border}`,
-            background: t.surface, color: t.textMuted,
-            fontWeight: '700', fontSize: '15px',
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}>
+          <button onClick={onNo} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: `2px solid ${t.border}`, background: t.surface, color: t.textMuted, fontWeight: '700', fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
             Not yet
           </button>
         </div>
