@@ -18,7 +18,9 @@ export const getProfile = () => API.get('/user/profile')
 export const updateProfile = (data) => {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) formData.append(key, value)
+    if (value !== undefined && value !== null) {
+      formData.append(key, value)
+    }
   })
   return API.put('/user/update', formData)
 }
