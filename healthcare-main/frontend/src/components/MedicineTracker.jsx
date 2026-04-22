@@ -20,22 +20,26 @@ export default function MedicineTracker({ onClose }) {
       bottom: 0,
       background: bgDark,
       overflow: 'auto',
+      zIndex: 10001,
     }}>
       <button
-        onClick={onClose}
+        onClick={(e) => {
+          e.stopPropagation()
+          onClose()
+        }}
         style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          width: '40px',
-          height: '40px',
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          width: '36px',
+          height: '36px',
           borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid rgba(255,255,255,0.15)',
           background: cardBg,
           color: textLight,
-          fontSize: '18px',
+          fontSize: '16px',
           cursor: 'pointer',
-          zIndex: 1000,
+          zIndex: 10002,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
