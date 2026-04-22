@@ -205,8 +205,10 @@ export default function NewsList() {
   }, [articles])
 
   const openArticle = (item) => {
-    navigate(`/dashboard/news/${encodeURIComponent(item.url || item.title)}`, { state: item })
+  if (item.url) {
+    window.open(item.url, '_blank')
   }
+}
 
   return (
     <div style={{ minHeight: '100vh', padding: '24px', background: t.pageBg, color: t.text }}>
