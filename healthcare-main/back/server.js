@@ -8,6 +8,8 @@ import userRoutes from './routes/user.js'
 import hospitalRoutes from './routes/hospital.js'
 import documentRoutes from './routes/document.js'
 import newsRoutes from './routes/news.js'
+import medicineRoutes from './routes/medicine.js'
+
 
 
 
@@ -32,6 +34,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/hospital', hospitalRoutes)
 app.use('/api/document', documentRoutes)
 app.use('/api/news', newsRoutes)
+app.use('/api/medicine', medicineRoutes)
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'Health AI Backend Running' })
