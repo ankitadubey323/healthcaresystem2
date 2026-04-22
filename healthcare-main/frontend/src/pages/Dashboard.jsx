@@ -256,21 +256,19 @@ export default function Dashboard() {
 
   // ✅ FIXED: FormData use karo — removePhoto string 'true' jata hai backend mein
   const handleRemovePhoto = async () => {
-    setShowProfileMenu(false)
-    setShowPhotoOptions(false)
-    setProfileError('')
-    setProfileMessage('')
-    try {
-      const formData = new FormData()
-      formData.append('removePhoto', 'true')
-      const { data } = await updateProfile(formData)
-      setUser(data.user)
-      localStorage.setItem('user', JSON.stringify(data.user))
-      setProfileMessage('Profile photo removed.')
-    } catch (err) {
-      setProfileError(err?.response?.data?.message || 'Failed to remove photo')
-    }
+  setShowProfileMenu(false)
+  setShowPhotoOptions(false)
+  setProfileError('')
+  setProfileMessage('')
+  try {
+    const { data } = await updateProfile({ removePhoto: 'true' })
+    setUser(data.user)
+    localStorage.setItem('user', JSON.stringify(data.user))
+    setProfileMessage('Profile photo removed.')
+  } catch (err) {
+    setProfileError(err?.response?.data?.message || 'Failed to remove photo')
   }
+}
 
   const modalInputStyle = (t) => ({
     width: '100%', padding: '12px 14px', borderRadius: '14px',
