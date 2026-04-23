@@ -1501,17 +1501,17 @@ export default function Dashboard() {
           className="btn-3d"
           style={{
             width: '100%', padding: '20px 10px', borderRadius: '20px', border: 'none',
-            background: showUploadMenu ? t.secondaryGrad : t.surface,
-            boxShadow: showUploadMenu ? t.shadowElevated : t.shadowCard,
+            background: 'linear-gradient(135deg, #1e40af, #3b82f6)',
+            boxShadow: '0 8px 24px rgba(30,64,175,0.35)',
             cursor: 'pointer',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            border: `1.5px solid ${showUploadMenu ? 'transparent' : t.border}`,
+            border: '1.5px solid rgba(59,130,246,0.4)',
           }}
         >
           <span style={{ fontSize: '28px' }}>📁</span>
-          <span style={{ fontSize: '12px', fontWeight: '700', color: showUploadMenu ? '#fff' : t.secondary }}>Upload Docs</span>
-          <span style={{ fontSize: '10px', color: showUploadMenu ? 'rgba(255,255,255,0.7)' : t.textMuted }}>Files</span>
+          <span style={{ fontSize: '12px', fontWeight: '700', color: '#fff' }}>Upload Docs</span>
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>Files</span>
         </button>
 
         {showUploadMenu && (

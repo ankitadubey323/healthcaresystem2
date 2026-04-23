@@ -15,6 +15,10 @@ const news = [
 export default function NewsBar() {
   const scrollRef = useRef(null)
 
+  const primaryBlue = '#1e40af'
+  const darkBlue = '#1e3a8a'
+  const lightBlue = '#3b82f6'
+
   useEffect(() => {
     const el = scrollRef.current
     let animId
@@ -33,8 +37,8 @@ export default function NewsBar() {
 
   return (
     <div style={{
-      background: '#111',
-      borderBottom: '1px solid #222',
+      background: darkBlue,
+      borderBottom: `1px solid ${primaryBlue}`,
       padding: '10px 0',
       overflow: 'hidden',
     }}>
@@ -49,7 +53,7 @@ export default function NewsBar() {
         }}
       >
         {[...news, ...news].map((item, i) => (
-          <span key={i} style={{ color: '#00d4aa', fontSize: '13px', flexShrink: 0 }}>
+          <span key={i} style={{ color: lightBlue, fontSize: '13px', flexShrink: 0 }}>
             {item}
           </span>
         ))}

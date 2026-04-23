@@ -491,7 +491,7 @@ export default function NewsSection() {
   const [loading, setLoading] = useState(true)
   const isLight = themeName === 'light'
 
-  const titleColor = isLight ? '#111827' : '#e2e8f0'
+  const titleColor = isLight ? '#1e40af' : '#60a5fa'
 
   const loadNews = async () => {
     setLoading(true)
@@ -515,14 +515,14 @@ export default function NewsSection() {
 
   const sectionStyle = {
     background: isLight
-      ? 'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(235,244,255,0.92))'
+      ? 'linear-gradient(135deg, rgba(30,64,175,0.12), rgba(59,130,246,0.08))'
       : 'linear-gradient(135deg, rgba(15,23,42,0.96), rgba(22,33,56,0.94))',
     borderRadius: '40px',
-    border: isLight ? '1px solid rgba(59,130,246,0.12)' : '1px solid rgba(148,163,184,0.16)',
+    border: isLight ? '1px solid rgba(30,64,175,0.3)' : '1px solid rgba(148,163,184,0.16)',
     padding: '28px 24px 22px',
     marginBottom: '18px',
     boxShadow: isLight
-      ? '0 32px 90px rgba(148,163,184,0.14)'
+      ? '0 32px 90px rgba(30,64,175,0.25)'
       : '0 32px 90px rgba(15,23,42,0.45)',
     backdropFilter: 'blur(18px)',
     position: 'relative',
