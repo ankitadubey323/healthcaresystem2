@@ -188,7 +188,21 @@ function extractJSON(text) {
 export const parseMedicineWithAI = async (req, res) => {
   try {
     const { input } = req.body
-    if (!input?.trim()) return res.status(400).json({ message: 'Input required' })
+
+    // Debug log for production troubleshooting
+    console.log('Medicine parse request body:', JSON.stringify(req.body).substring(0, 200))
+
+    // Validate input is a non-empty string
+    if (!input || typeof input !== 'string' || !input.trim()) {
+      return res.status(400).json({ message: 'Text input required. Please type medicine details.' })
+    }
+
+    // Reject if input looks like a file path or image
+    const imagePattern = /\.(png|jpg|jpeg|gif|webp|svg|bmp)(\?.*)?$/i
+    if (imagePattern.test(input.trim()) || input.includes('data:image')) {
+      console.error('Image upload rejected:', input.substring(0, 100))
+      return res.status(400).json({ message: 'Image upload not supported. Please type medicine details as text.' })
+    }
 
     const today = new Date().toISOString().split('T')[0]
 
@@ -213,7 +227,7 @@ Rules:
 - dosage default "1 tablet" if not mentioned
 - ONLY JSON, no other text`
         },
-        { role: 'user', content: input }
+        { role: 'user', content: input.substring(0, 1000) } // Limit input size
       ],
       temperature: 0.1,
       max_tokens: 400,
@@ -248,6 +262,10 @@ Rules:
     res.json({ success: true, medicine: result })
   } catch (err) {
     console.error('AI parse error:', err.message)
+    // Provide specific error for model-related issues
+    if (err.message?.includes('model') || err.message?.includes('image')) {
+      return res.status(500).json({ message: 'AI service error. Please type medicine details manually.' })
+    }
     res.status(500).json({ message: 'Could not parse. Try: "Paracetamol 500mg morning and night for 5 days"' })
   }
 }
