@@ -1834,15 +1834,15 @@ export default function Dashboard() {
         <div style={{ position: 'absolute', top: '40%', left: '20%', width: '200px', height: '200px', borderRadius: '50%', background: t.gradientBlob2, filter: 'blur(40px)', pointerEvents: 'none' }} />
 
         {/* Header */}
-        <div style={{ padding: '16px 18px 14px', background: t.glass, backdropFilter: 'blur(20px)', borderBottom: `1px solid ${t.glassBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 4px 24px -8px rgba(0,0,0,0.1)' }}>
+        <div style={{ padding: '16px 18px 14px', background: '#1E3A8A', backdropFilter: 'blur(20px)', borderBottom: `1px solid ${t.glassBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 4px 24px -8px rgba(0,0,0,0.1)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
             <div onClick={e => { e.stopPropagation(); setShowProfileMenu(v => !v) }} style={{ position: 'relative', cursor: 'pointer' }}>
               <Avatar size={44} />
               <div style={{ position: 'absolute', bottom: 1, right: 1, width: '11px', height: '11px', borderRadius: '50%', background: '#48bb78', border: '2px solid white' }} />
             </div>
             <div>
-              <p style={{ fontSize: '11px', color: t.textMuted, fontWeight: '600', letterSpacing: '0.3px' }}>{getGreeting()} 👋</p>
-              <p style={{ fontSize: '15px', fontWeight: '700', color: t.text }}>{user?.name || 'User'}</p>
+              <p style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: '600', letterSpacing: '0.3px' }}>{getGreeting()} 👋</p>
+              <p style={{ fontSize: '15px', fontWeight: '700', color: '#ffffff' }}>{user?.name || 'User'}</p>
             </div>
 
             {showProfileMenu && (

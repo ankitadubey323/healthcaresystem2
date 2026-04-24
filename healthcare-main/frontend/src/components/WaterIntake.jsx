@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useTheme } from '../context/ThemeContext'
+import WaterSplash3D from './WaterSplash3D'
 
 const GOAL = 2.0
 const CUP = 0.25
@@ -7,22 +9,31 @@ const CUP = 0.25
 export default function WaterIntake() {
   const { t } = useTheme()
   const [consumed, setConsumed] = useState(1.25)
-  const [celebration, setCelebration] = useState(false)
+  const [showSplash, setShowSplash] = useState(false)
+  const [hasSplashed, setHasSplashed] = useState(false)
   const pct = Math.min((consumed / GOAL) * 100, 100)
   const cups = Math.round(consumed / CUP)
   const totalCups = Math.round(GOAL / CUP)
 
   const grad = pct >= 80 ? ['#43e97b', '#38f9d7']
-             : pct >= 50 ? ['#4facfe', '#00f2fe']
-                         : ['#a1c4fd', '#c2e9fb']
+            : pct >= 50 ? ['#4facfe', '#00f2fe']
+                        : ['#a1c4fd', '#c2e9fb']
 
   useEffect(() => {
-    if (pct >= 100 && !celebration) {
-      setCelebration(true)
-      const timer = setTimeout(() => setCelebration(false), 3000)
-      return () => clearTimeout(timer)
+    if (pct >= 100 && !showSplash && !hasSplashed) {
+      setShowSplash(true)
     }
-  }, [pct, celebration])
+  }, [pct, showSplash, hasSplashed])
+
+  const handleSplashComplete = () => {
+    setShowSplash(false)
+    setHasSplashed(true)
+  }
+
+  const resetHandler = () => {
+    setConsumed(0)
+    setHasSplashed(false)
+  }
 
   return (
     <div style={{
@@ -150,44 +161,11 @@ export default function WaterIntake() {
          </p>
        )}
 
-       {/* 3D Sprinkling Celebration Effect */}
-       {celebration && (
-         <div style={{
-           position: 'absolute',
-           top: 0,
-           left: 0,
-           right: 0,
-           bottom: 0,
-           pointerEvents: 'none',
-           overflow: 'hidden',
-           borderRadius: '22px',
-           zIndex: 10,
-         }}>
-           {Array.from({ length: 50 }).map((_, i) => {
-             const angle = (i / 50) * Math.PI * 2
-             const radius = 80 + Math.random() * 100
-             const delay = Math.random() * 0.5
-             const size = 6 + Math.random() * 10
-             const hue = 180 + Math.random() * 60
-             return (
-               <div key={i} style={{
-                 position: 'absolute',
-                 top: '50%',
-                 left: '50%',
-                 width: `${size}px`,
-                 height: `${size}px`,
-                 background: `radial-gradient(circle at 30% 30%, hsl(${hue}, 100%, 85%), hsl(${hue}, 100%, 50%))`,
-                 borderRadius: '50% 50% 50% 0',
-                 transform: 'translate(-50%, -50%)',
-                 animation: `sprinkle-3d 1.5s ease-out ${delay}s forwards`,
-                 '--angle': `${angle}rad`,
-                 '--radius': `${radius}px`,
-                 boxShadow: `0 0 ${size/2}px hsl(${hue}, 100%, 70%), inset 0 0 ${size/3}px rgba(255,255,255,0.6)`,
-               }} />
-             )
-           })}
-         </div>
-       )}
-     </div>
+        {/* 3D Water Splash Celebration Effect */}
+        {showSplash && createPortal(
+          <WaterSplash3D onComplete={handleSplashComplete} />,
+          document.body
+        )}
+      </div>
    )
  }

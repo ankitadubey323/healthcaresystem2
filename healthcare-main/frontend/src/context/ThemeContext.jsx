@@ -8,26 +8,26 @@ export const themes = {
   light: {
     mode: 'light',
     // Page / container
-    pageBg: '#F8FAFC',
+    pageBg: '#E3F2FD',
     containerBg: '#FFFFFF',
     surface: '#FFFFFF',
-    surfaceHover: '#F8FAFC',
-    surfaceAlt: '#F1F5F9',
-    headerBg: 'rgba(255,255,255,0.85)',
+    surfaceHover: '#F5FAFF',
+    surfaceAlt: '#E8F4FF',
+    headerBg: 'rgba(25, 118, 210, 0.92)',
     sidebarBg: 'rgba(255,255,255,0.92)',
 
     // Borders & Shadows - Premium SaaS layered depth (Stripe/Notion inspired)
-    border: '#E2E8F0',
-    borderStrong: '#CBD5E1',
-    borderLight: '#F1F5F9',
+    border: '#BBDEFB',
+    borderStrong: '#90CAF9',
+    borderLight: '#E3F2FD',
     
     // Layered shadows for 3D depth effect
     shadow: '0 1px 3px rgba(0,0,0,0.04), 0 3px 6px rgba(0,0,0,0.03)',
     shadowMd: '0 6px 16px -3px rgba(0,0,0,0.08), 0 4px 8px -2px rgba(0,0,0,0.05)',
     shadowLg: '0 12px 32px -6px rgba(0,0,0,0.1), 0 8px 16px -4px rgba(0,0,0,0.06)',
-    shadowXl: '0 24px 48px -10px rgba(0,0,0,0.14), 0 12px 24px -6px rgba(0,0,0,0.08)',
+    shadowXl: '0 24px 48px -10px rgba(0,0,0,0.14), 0 12px 24px -6px rgba(0,0,0,0.12)',
     shadow2xl: '0 28px 64px -14px rgba(0,0,0,0.18), 0 14px 32px -7px rgba(0,0,0,0.12)',
-    shadowGlow: '0 0 0 1px rgba(79,70,229,0.08), 0 0 32px rgba(79,70,229,0.15)',
+    shadowGlow: '0 0 0 1px rgba(33,150,243,0.08), 0 0 32px rgba(33,150,243,0.15)',
     
     // Card shadows with 3D depth
     shadowCard: '0 2px 4px rgba(0,0,0,0.03), 0 8px 14px -3px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.02)',
@@ -39,39 +39,39 @@ export const themes = {
     shadowModal: '0 28px 72px -14px rgba(0,0,0,0.22), 0 14px 36px -8px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.05)',
 
     // Text
-    text: '#0F172A',
-    textSub: '#334155',
-    textMuted: '#64748B',
-    textLight: '#94A3B8',
+    text: '#0D47A1',
+    textSub: '#1565C0',
+    textMuted: '#42A5F5',
+    textLight: '#90CAF9',
 
-    // Brand / primary - Modern Indigo/Violet
-    primary: '#4F46E5',
-    primaryDark: '#4338CA',
-    primaryGrad: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-    primaryLight: 'rgba(79,70,229,0.08)',
+    // Brand / primary - Classic Blue
+    primary: '#1976D2',
+    primaryDark: '#1565C0',
+    primaryGrad: 'linear-gradient(135deg, #1976D2 0%, #2196F3 100%)',
+    primaryLight: 'rgba(25,118,210,0.08)',
 
     // Secondary
-    secondary: '#7C3AED',
-    secondaryGrad: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)',
+    secondary: '#2196F3',
+    secondaryGrad: 'linear-gradient(135deg, #2196F3 0%, #42A5F5 100%)',
 
     // Gradient backgrounds - Subtle ambient
-    gradientBlob1: 'radial-gradient(circle at 20% 20%, rgba(79,70,229,0.1) 0%, transparent 50%)',
-    gradientBlob2: 'radial-gradient(circle at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 50%)',
+    gradientBlob1: 'radial-gradient(circle at 20% 20%, rgba(33,150,243,0.12) 0%, transparent 50%)',
+    gradientBlob2: 'radial-gradient(circle at 80% 80%, rgba(66,165,245,0.1) 0%, transparent 50%)',
 
     // Glass - Premium frosted glass effect
     glass: 'rgba(255,255,255,0.75)',
     glassBorder: 'rgba(255,255,255,0.6)',
 
     // Inputs
-    inputBg: '#FAFAFA',
-    inputBorder: '#E2E8F0',
-    inputText: '#0F172A',
-    inputPlaceholder: '#94A3B8',
-    inputFocusRing: '0 0 0 3px rgba(79,70,229,0.15)',
+    inputBg: '#F5FAFF',
+    inputBorder: '#BBDEFB',
+    inputText: '#0D47A1',
+    inputPlaceholder: '#90CAF9',
+    inputFocusRing: '0 0 0 3px rgba(33,150,243,0.15)',
 
     // Bottom nav / sidebar
-    navActive: 'rgba(79,70,229,0.1)',
-    navActiveDot: '#4F46E5',
+    navActive: 'rgba(33,150,243,0.1)',
+    navActiveDot: '#2196F3',
 
     // Misc status
     success: '#10B981',
@@ -90,18 +90,18 @@ export const themes = {
   dark: {
     mode: 'dark',
     // Page / container
-    pageBg: '#0B1120',
-    containerBg: '#151E2E',
-    surface: '#1A2332',
-    surfaceHover: '#243048',
-    surfaceAlt: '#2A3648',
-    headerBg: 'rgba(21,30,46,0.88)',
-    sidebarBg: 'rgba(21,30,46,0.94)',
+    pageBg: '#0A1929',
+    containerBg: '#0F2744',
+    surface: '#153057',
+    surfaceHover: '#1A3D66',
+    surfaceAlt: '#18355C',
+    headerBg: 'rgba(25, 118, 210, 0.94)',
+    sidebarBg: 'rgba(15, 39, 68, 0.94)',
 
     // Borders & Shadows - Premium SaaS layered depth (dark mode)
-    border: '#2D3A50',
-    borderStrong: '#3D4D68',
-    borderLight: '#243048',
+    border: '#1A3A5C',
+    borderStrong: '#224A72',
+    borderLight: '#122A4A',
     
     // Layered shadows for 3D depth effect
     shadow: '0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.25)',
@@ -109,7 +109,7 @@ export const themes = {
     shadowLg: '0 14px 32px -6px rgba(0,0,0,0.4), 0 8px 18px -4px rgba(0,0,0,0.35)',
     shadowXl: '0 26px 52px -10px rgba(0,0,0,0.5), 0 12px 26px -8px rgba(0,0,0,0.4)',
     shadow2xl: '0 30px 70px -16px rgba(0,0,0,0.6), 0 16px 36px -8px rgba(0,0,0,0.45)',
-    shadowGlow: '0 0 0 1px rgba(129,140,248,0.12), 0 0 32px rgba(129,140,248,0.2)',
+    shadowGlow: '0 0 0 1px rgba(33,150,243,0.12), 0 0 32px rgba(33,150,243,0.2)',
     
     // Card shadows with 3D depth
     shadowCard: '0 2px 4px rgba(0,0,0,0.3), 0 8px 14px -3px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05)',
@@ -121,39 +121,39 @@ export const themes = {
     shadowModal: '0 30px 72px -16px rgba(0,0,0,0.65), 0 16px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)',
 
     // Text
-    text: '#F1F5F9',
-    textSub: '#CBD5E1',
-    textMuted: '#94A3B8',
-    textLight: '#64748B',
+    text: '#E3F2FD',
+    textSub: '#90CAF9',
+    textMuted: '#64B5F6',
+    textLight: '#42A5F5',
 
-    // Brand / primary - Light mode indigo
-    primary: '#818CFG',
-    primaryDark: '#6366F1',
-    primaryGrad: 'linear-gradient(135deg, #818CF8 0%, #A78BFA 100%)',
-    primaryLight: 'rgba(129,140,248,0.15)',
+    // Brand / primary - Classic Blue
+    primary: '#42A5F5',
+    primaryDark: '#2196F3',
+    primaryGrad: 'linear-gradient(135deg, #42A5F5 0%, #64B5F6 100%)',
+    primaryLight: 'rgba(66,165,245,0.15)',
 
     // Secondary
-    secondary: '#A78BFA',
-    secondaryGrad: 'linear-gradient(135deg, #A78BFA 0%, #C4B5FD 100%)',
+    secondary: '#64B5F6',
+    secondaryGrad: 'linear-gradient(135deg, #64B5F6 0%, #90CAF9 100%)',
 
     // Gradient backgrounds - Subtle ambient
-    gradientBlob1: 'radial-gradient(circle at 20% 20%, rgba(129,140,248,0.18) 0%, transparent 50%)',
-    gradientBlob2: 'radial-gradient(circle at 80% 80%, rgba(167,139,250,0.12) 0%, transparent 50%)',
+    gradientBlob1: 'radial-gradient(circle at 20% 20%, rgba(66,165,245,0.2) 0%, transparent 50%)',
+    gradientBlob2: 'radial-gradient(circle at 80% 80%, rgba(100,181,246,0.15) 0%, transparent 50%)',
 
     // Glass - Premium frosted glass effect
-    glass: 'rgba(26,35,50,0.8)',
-    glassBorder: 'rgba(255,255,255,0.08)',
+    glass: 'rgba(15, 39, 68, 0.8)',
+    glassBorder: 'rgba(66,165,245,0.12)',
 
     // Inputs
-    inputBg: '#0B1120',
-    inputBorder: '#2D3A50',
-    inputText: '#F1F5F9',
-    inputPlaceholder: '#64748B',
-    inputFocusRing: '0 0 0 3px rgba(129,140,248,0.2)',
+    inputBg: '#0A1929',
+    inputBorder: '#1A3A5C',
+    inputText: '#E3F2FD',
+    inputPlaceholder: '#64B5F6',
+    inputFocusRing: '0 0 0 3px rgba(66,165,245,0.2)',
 
     // Bottom nav / sidebar
-    navActive: 'rgba(129,140,248,0.15)',
-    navActiveDot: '#818CF8',
+    navActive: 'rgba(66,165,245,0.15)',
+    navActiveDot: '#42A5F5',
 
     // Misc status
     success: '#34D399',

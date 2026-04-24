@@ -19,14 +19,14 @@ export default function App() {
   return (
     <ThemeProvider>
       <ChatProvider>
-        <div style={{
-          minHeight: '100vh',
-          background: 'radial-gradient(circle at top left, rgba(96,165,250,0.08), transparent 24%), radial-gradient(circle at bottom right, rgba(139,92,246,0.08), transparent 28%), #f8fbff',
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '20px 12px 24px',
-          boxSizing: 'border-box',
-        }}>
+         <div style={{
+           minHeight: '100vh',
+           background: 'radial-gradient(circle at top left, rgba(33,150,243,0.12), transparent 24%), radial-gradient(circle at bottom right, rgba(25,118,210,0.1), transparent 28%), #E3F2FD',
+           display: 'flex',
+           justifyContent: 'center',
+           padding: '20px 12px 24px',
+           boxSizing: 'border-box',
+         }}>
           <div style={{
             width: '100%',
             maxWidth: '520px',

@@ -576,8 +576,8 @@ export default function MedicineTracker({ onClose }) {
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: BG, overflow: 'auto', zIndex: 10001 }}>
 
-      {/* Header */}
-      <div style={{ padding: '13px 16px', background: '#0d1220', borderBottom: `1px solid ${BORDER}`, position: 'sticky', top: 0, zIndex: 20 }}>
+       {/* Header */}
+       <div style={{ padding: '13px 16px', background: '#0d47a1', borderBottom: `1px solid ${BORDER}`, position: 'sticky', top: 0, zIndex: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: view === 'home' ? '10px' : 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {view !== 'home' && (
