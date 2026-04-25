@@ -1,8 +1,4 @@
-// ── sw.js — place in frontend/public/sw.js ───────────────────────────────────
-// Industry-level service worker for medicine reminders
-// Works even when app is closed / phone screen off
-
-const CACHE = 'medtrk-v1'
+const CACHE = 'healthcare-v1'
 
 self.addEventListener('install', e => {
   self.skipWaiting()
@@ -12,92 +8,79 @@ self.addEventListener('activate', e => {
   e.waitUntil(clients.claim())
 })
 
-// ── Receive message from app to show notification ─────────────────────────────
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SCHEDULE_NOTIF') {
-    const { title, body, tag, data, delay } = e.data
-    // Schedule the notification after `delay` ms
-    setTimeout(() => {
-      self.registration.showNotification(title, {
-        body,
-        icon: '/icon.png',
-        badge: '/icon.png',
-        tag,
-        data,
-        requireInteraction: true,
-        vibrate: [300, 100, 300, 100, 300],
-        actions: [
-          { action: 'taken', title: 'Yes, taken!' },
-          { action: 'skip',  title: ' Skip'        },
-        ],
-      })
-    }, delay)
+// ── Push notification receive karo (server se aaya) ──────────────────────────
+self.addEventListener('push', e => {
+  if (!e.data) return
+
+  let data = {}
+  try { data = e.data.json() } catch { data = { title: '💊 Medicine Reminder', body: e.data.text() } }
+
+  const options = {
+    body: data.body || 'Medicine lene ka waqt ho gaya!',
+    icon: '/favicon.svg',
+    badge: '/favicon.svg',
+    tag: data.tag || 'medicine-reminder',
+    requireInteraction: true,
+    vibrate: [200, 100, 200, 100, 200],
+    data: {
+      medId: data.medId,
+      date: data.date,
+      time: data.time,
+      tag: data.tag,
+      url: '/'
+    },
+    actions: [
+      { action: 'taken', title: '✅ Le Liya' },
+      { action: 'skip', title: '❌ Skip' }
+    ]
   }
 
-  if (e.data?.type === 'SHOW_NOTIF') {
-    self.registration.showNotification(e.data.title, {
-      body: e.data.body,
-      icon: '/icon.png',
-      badge: '/icon.png',
-      tag: e.data.tag,
-      data: e.data.data,
-      requireInteraction: true,
-      vibrate: [300, 100, 300],
-      actions: [
-        { action: 'taken', title: ' Yes, taken!' },
-        { action: 'skip',  title: ' Skip'        },
-      ],
-    })
-  }
+  e.waitUntil(self.registration.showNotification(data.title || '💊 Medicine Reminder', options))
 })
 
-// ── Notification click / action ───────────────────────────────────────────────
+// ── Notification pe click handle karo ────────────────────────────────────────
 self.addEventListener('notificationclick', e => {
-  const notif = e.notification
-  const action = e.action
-  const data   = notif.data || {}
-  notif.close()
+  e.notification.close()
+
+  const { medId, date, time, tag } = e.notification.data || {}
+  const action = e.action // 'taken' | 'skip' | '' (normal click)
+
+  const messageType = action === 'taken'
+    ? 'DOSE_TAKEN'
+    : action === 'skip'
+      ? 'DOSE_MISSED'
+      : 'DOSE_TAKEN' // normal click = taken
 
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      // Send dose action back to open window
-      for (const client of list) {
-        client.postMessage({
-          type:   'DOSE_ACTION',
-          taken:  action === 'taken',
-          medId:  data.medId,
-          date:   data.date,
-          time:   data.time,
-          name:   data.name,
-        })
-        client.focus()
+      // App open hai toh usse message bhejo
+      if (list.length > 0) {
+        list[0].postMessage({ type: messageType, medId, date, time, tag })
+        list[0].focus()
         return
       }
-      // No open window — open app
-      if (clients.openWindow) {
-        return clients.openWindow('/')
-      }
+      // App band hai toh open karo
+      return clients.openWindow('/').then(client => {
+        // Thoda wait karo phir message bhejo
+        if (client) {
+          setTimeout(() => {
+            client.postMessage({ type: messageType, medId, date, time, tag })
+          }, 2000)
+        }
+      })
     })
   )
 })
 
-// ── Push (for future server-push support) ─────────────────────────────────────
-self.addEventListener('push', e => {
-  if (!e.data) return
-  const payload = e.data.json()
-  e.waitUntil(
-    self.registration.showNotification(payload.title || '💊 Medicine Reminder', {
-      body:             payload.body || 'Time to take your medicine!',
-      icon:             '/icon.png',
-      badge:            '/icon.png',
-      tag:              payload.tag  || 'med-reminder',
-      data:             payload.data || {},
-      requireInteraction: true,
-      vibrate:          [300, 100, 300],
-      actions: [
-        { action: 'taken', title: ' Yes, taken!' },
-        { action: 'skip',  title: ' Skip'        },
-      ],
+// ── Notification dismiss (bina click ke band ki) ─────────────────────────────
+self.addEventListener('notificationclose', e => {
+  const { medId, date, time } = e.notification.data || {}
+  if (!medId) return
+
+  // App ko batao ki dismiss hua — auto-miss baad mein server handle karega
+  clients.matchAll({ type: 'window' }).then(list => {
+    list.forEach(client => {
+      client.postMessage({ type: 'DOSE_DISMISSED', medId, date, time })
     })
-  )
+  })
 })

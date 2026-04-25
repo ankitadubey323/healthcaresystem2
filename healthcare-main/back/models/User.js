@@ -15,6 +15,15 @@ const userSchema = new mongoose.Schema({
     bmi: { type: Number },
     profilePhoto: { type: String, default: '' },
     aadhaarUrl: { type: String, default: '' },
+    smartPrediction: {
+  patterns: { type: mongoose.Schema.Types.Mixed },
+  insight: { type: String },
+  updatedAt: { type: Date }
+},
+pushSubscription: {
+  endpoint: String,
+  keys: { p256dh: String, auth: String }
+}
 }, { timestamps: true })
 
 // Auto hash password
