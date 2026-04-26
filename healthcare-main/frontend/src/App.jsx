@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ChatProvider } from './context/ChatContext'
@@ -16,6 +16,10 @@ const ProtectedRoute = ({ children }) => {
 }
 
 export default function App() {
+  const location = useLocation()
+  const pathname = location.pathname
+  const isDashboardRoute = pathname.startsWith('/dashboard')
+
   return (
     <ThemeProvider>
       <ChatProvider>
@@ -67,7 +71,7 @@ export default function App() {
                 </ProtectedRoute>
               } />
             </Routes>
-            <DrAIWidget />
+            {isDashboardRoute && <DrAIWidget />}
           </div>
         </div>
       </ChatProvider>

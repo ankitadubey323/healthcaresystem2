@@ -77,7 +77,7 @@ export default function DrAIWidget() {
     width: isMobile ? '100%' : '360px',
     height: isMobile ? '100%' : '640px',
     maxHeight: isMobile ? '100vh' : '640px',
-    background: 'linear-gradient(180deg, #ffffff, #eef6ff)',
+    background: 'linear-gradient(180deg, #e3f2fd, #bbdefb)', // Blue background as requested
     borderRadius: isMobile ? '0' : '38px',
     border: isMobile ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
     boxShadow: isMobile ? 'none' : '0 30px 80px rgba(15, 23, 42, 0.16)',
