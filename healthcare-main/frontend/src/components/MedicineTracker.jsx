@@ -8,7 +8,9 @@ const fmtTime = (t) => {
   if (!t) return ''
   const [h, m] = t.split(':')
   const hr = parseInt(h)
-  return `${hr > 12 ? hr - 12 : hr || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`
+  const ampm = hr >= 12 ? 'PM' : 'AM'
+  const hr12 = hr % 12 === 0 ? 12 : hr % 12
+  return `${hr12}:${m} ${ampm}`
 }
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6']
 const STATUS_COLOR = { full: '#10b981', partial: '#f59e0b', skipped: '#ef4444', pending: '#6366f1' }
@@ -658,19 +660,15 @@ export default function MedicineTracker({ onClose }) {
       {/* Side Panel */}
       <div style={{
         position: 'fixed',
-        top: '50%', right: '20px',
-        transform: 'translateY(-50%)',
+        top: 0, right: 0, bottom: 0,
         width: '400px',
-        maxWidth: 'calc(100vw - 40px)',
-        maxHeight: '85vh',
-        borderRadius: '16px',
+        maxWidth: '100vw',
         background: BG,
-        border: `1px solid ${BORDER}`,
+        borderLeft: `1px solid ${BORDER}`,
         display: 'flex', flexDirection: 'column',
         zIndex: 100000,
-        boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+        boxShadow: '-12px 0 40px rgba(0,0,0,0.6)',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        overflow: 'hidden',
       }}>
         {/* Header */}
         <div style={{ padding: '13px 15px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
