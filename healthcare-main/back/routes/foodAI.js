@@ -88,7 +88,6 @@ Return ONLY this JSON (no markdown):
     const cleaned = raw.replace(/```json|```/g, '').trim()
     const parsed = JSON.parse(cleaned)
 
-    // Drink image — Unsplash free URL
     const drinkImages = {
       'green tea': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80',
       'lemon water': 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=600&q=80',
@@ -125,6 +124,60 @@ function detectRequestType(condition) {
   if (wantsDrink && wantsFood) return 'both'
   if (wantsDrink) return 'drink'
   return 'food'
+}
+
+// ── Groq Vision se food scan karo (No Gemini needed!) ───────────────────────
+async function scanWithGroqVision(imageBase64, mimeType = 'image/jpeg') {
+  const prompt = `You are a food recognition and nutrition expert. Look at this food image carefully.
+
+Return ONLY this JSON (no markdown, no extra text):
+{
+  "detected_food": "exact food name in English",
+  "confidence": "high",
+  "calories": 250,
+  "per": "1 serving",
+  "description": "Brief 1-2 line description of this food and its nutrition",
+  "tags": ["tag1", "tag2", "tag3"],
+  "macros": {
+    "protein": "10g",
+    "carbs": "30g",
+    "fat": "8g",
+    "fiber": "3g"
+  }
+}
+
+Rules:
+- confidence must be "high", "medium", or "low"
+- calories must be a number (realistic estimate)
+- detected_food must be a common English food name
+- tags should be like: "High Protein", "Low Carb", "Vegetarian", "Healthy", etc.`
+
+  const completion = await groq.chat.completions.create({
+    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: {
+              url: `data:${mimeType};base64,${imageBase64}`,
+            },
+          },
+          {
+            type: 'text',
+            text: prompt,
+          },
+        ],
+      },
+    ],
+    temperature: 0.1,
+    max_tokens: 400,
+  })
+
+  const raw = completion.choices[0]?.message?.content || ''
+  const cleaned = raw.replace(/```json|```/g, '').trim()
+  return JSON.parse(cleaned)
 }
 
 // ── POST /api/food/recommend ─────────────────────────────────────────────────
@@ -230,11 +283,9 @@ Return ONLY this JSON:
       return res.status(500).json({ error: 'AI parsing failed. Try again.' })
     }
 
-    // Har item ke liye data fetch karo
     const enrichedFoods = await Promise.all(
       parsed.recommendations.map(async (food) => {
         if (food.isDrink) {
-          // Drink ke liye Groq se recipe lo
           const drinkData = await getDrinkRecipe(food.name, condition)
           return {
             name: drinkData?.name || food.name,
@@ -250,7 +301,6 @@ Return ONLY this JSON:
             description: drinkData?.description || food.why,
           }
         } else {
-          // Food ke liye MealDB se lo
           const mealData = await getMealData(food.name)
           return {
             name: mealData?.name || food.name,
@@ -269,7 +319,6 @@ Return ONLY this JSON:
       })
     )
 
-    // Safety check
     const evalPrompt = `You are a strict medical nutrition safety evaluator.
 Condition: "${condition}"
 Items: ${enrichedFoods.map(f => f.name).join(', ')}
@@ -344,49 +393,35 @@ router.get('/search', async (req, res) => {
 })
 
 // ── POST /api/food/scan ──────────────────────────────────────────────────────
+// Groq Vision se actual image dekh ke food detect karta hai ✅
 router.post('/scan', async (req, res) => {
-  const { imageBase64 } = req.body
+  const { imageBase64, mimeType } = req.body
   if (!imageBase64) return res.status(400).json({ error: 'No image provided' })
 
-  const detectPrompt = `You are a food recognition expert.
-Identify the food and return ONLY this JSON (no markdown):
-{
-  "detected_food": "Simple common food name",
-  "confidence": "high|medium|low",
-  "description": "Brief description",
-  "estimated_calories": 200
-}`
-
   try {
-    const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: detectPrompt }],
-      temperature: 0.2,
-      max_tokens: 200,
-    })
-
-    const raw = completion.choices[0]?.message?.content || ''
-    const cleaned = raw.replace(/```json|```/g, '').trim()
     let detected
-
     try {
-      detected = JSON.parse(cleaned)
-    } catch {
-      detected = { detected_food: 'Unknown Food', confidence: 'low', estimated_calories: 0 }
+      detected = await scanWithGroqVision(imageBase64, mimeType || 'image/jpeg')
+      console.log('Groq Vision detected:', detected.detected_food)
+    } catch (err) {
+      console.error('Groq Vision scan error:', err.message)
+      return res.status(500).json({ error: 'Image analysis failed. Please try again with a clearer photo.' })
     }
 
     const mealData = await getMealData(detected.detected_food)
 
     res.json({
       detected_food: mealData?.name || detected.detected_food,
-      confidence: detected.confidence,
-      calories: detected.estimated_calories || 0,
-      per: "1 serving",
+      confidence: detected.confidence || 'high',
+      calories: detected.calories || 0,
+      per: detected.per || "1 serving",
       image: mealData?.image || null,
-      tags: mealData?.tags || [],
+      tags: detected.tags?.length ? detected.tags : (mealData?.tags || []),
       description: detected.description || '',
+      macros: detected.macros || null,
       ingredients: mealData?.ingredients || [],
       steps: mealData?.steps || [],
+      youtubeUrl: mealData?.youtubeUrl || null,
     })
 
   } catch (err) {
