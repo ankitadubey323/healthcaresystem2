@@ -11,6 +11,7 @@ import DocumentVault from '../components/DocumentVault'
 import WaterIntake from '../components/WaterIntake'
 import HealthFeatures from '../components/HealthFeatures'
 import MedicineTracker from '../components/MedicineTracker'
+import HealthyFoodSection from '../components/HealthyFoodSection';
 
 const D = {
   bg:           '#0A0F1E',
@@ -374,6 +375,11 @@ export default function Dashboard() {
         {/* Hospitals */}
         <div style={{padding:'14px 14px 0'}}>
           <Card><HospitalList /></Card>
+        </div>
+
+        {/* Healthy Food Section */}
+        <div style={{padding:'14px 0 0'}}>
+          <HealthyFoodSection />
         </div>
 
         {/* Documents */}
