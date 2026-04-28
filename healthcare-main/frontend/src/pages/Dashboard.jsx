@@ -1,3 +1,557 @@
+// import { useState, useEffect, useRef } from 'react'
+// import { useAuth } from '../context/AuthContext'
+// import { useTheme } from '../context/ThemeContext'
+// import { useNavigate } from 'react-router-dom'
+// import { uploadDocument } from '../utils/api'
+// import NewsSection from '../components/NewsSection'
+// import HospitalList from '../components/HospitalList'
+// import DocumentVault from '../components/DocumentVault'
+// // import WaterIntake from '../components/WaterIntake'
+// import HealthFeatures from '../components/HealthFeatures'
+
+// function useIsDesktop() {
+//   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768)
+//   useEffect(() => {
+//     const handler = () => setIsDesktop(window.innerWidth >= 768)
+//     window.addEventListener('resize', handler)
+//     return () => window.removeEventListener('resize', handler)
+//   }, [])
+//   return isDesktop
+// }
+
+// function Card({ children, t, style = {} }) {
+//   return (
+//     <div style={{
+//       background: t.surface,
+//       borderRadius: '12px',
+//       padding: '20px',
+//       boxShadow: t.shadow,
+//       border: `1px solid ${t.border}`,
+//       ...style,
+//     }}>
+//       {children}
+//     </div>
+//   )
+// }
+
+// export default function Dashboard() {
+//   const { user, logout } = useAuth()
+//   const { t, themeName, toggleTheme } = useTheme()
+//   const navigate = useNavigate()
+//   const isDesktop = useIsDesktop()
+//   const isLight = themeName === 'light'
+
+//   const [showProfileMenu, setShowProfileMenu] = useState(false)
+//   const [showWaterPopup, setShowWaterPopup] = useState(false)
+//   const [activeTab, setActiveTab] = useState('home')
+//   const [showNewsSection, setShowNewsSection] = useState(false)
+//   const [showUploadMenu, setShowUploadMenu] = useState(false)
+//   const [notifications, setNotifications] = useState(3)
+//   const [docRefreshKey, setDocRefreshKey] = useState(0)
+//   const [uploadingDoc, setUploadingDoc] = useState(false)
+//   const fileInputRef = useRef(null)
+//   const cameraInputRef = useRef(null)
+
+//   useEffect(() => {
+//     const timer = setTimeout(() => setShowWaterPopup(true), 1200)
+//     return () => clearTimeout(timer)
+//   }, [])
+
+//   const handleLogout = () => { logout(); navigate('/') }
+//   const avatarLetter = user?.name?.[0]?.toUpperCase() || 'U'
+
+//   const Avatar = ({ size = 44 }) => (
+//     user?.profilePhoto ? (
+//       <img src={user.profilePhoto} alt={user.name} style={{
+//         width: size, height: size, borderRadius: '50%',
+//         objectFit: 'cover',
+//         border: `2.5px solid ${t.primary}`,
+//         boxShadow: `0 4px 14px ${t.primary}55`,
+//       }} />
+//     ) : (
+//       <div style={{
+//         width: size, height: size, borderRadius: '50%',
+//         background: t.primaryGrad,
+//         display: 'flex', alignItems: 'center', justifyContent: 'center',
+//         fontSize: size * 0.4, fontWeight: '800', color: '#fff',
+//         boxShadow: `0 4px 14px ${t.primary}55`,
+//         flexShrink: 0,
+//       }}>
+//         {avatarLetter}
+//       </div>
+//     )
+//   )
+
+//   const handleUploadFile = async (file) => {
+//     if (!file) return
+//     setUploadingDoc(true)
+//     try {
+//       const fd = new FormData()
+//       fd.append('document', file)
+//       await uploadDocument(fd)
+//       setDocRefreshKey(k => k + 1)
+//     } catch (err) {
+//       console.error('Upload failed', err)
+//     } finally {
+//       setUploadingDoc(false)
+//       setShowUploadMenu(false)
+//     }
+//   }
+
+//   const onSelectUploadFile = async (event) => {
+//     const selected = event.target.files?.[0]
+//     if (selected) {
+//       await handleUploadFile(selected)
+//     }
+//     event.target.value = ''
+//   }
+
+//   const ActionRow = () => (
+//     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+//       <button
+//         onClick={e => { e.stopPropagation(); setShowNewsSection(v => !v); setShowUploadMenu(false) }}
+//         style={{
+//           flex: '1 1 140px', minWidth: 0,
+//           padding: '14px 12px', borderRadius: '10px', border: 'none',
+//           background: showNewsSection ? t.primaryGrad : t.surface,
+//           boxShadow: showNewsSection ? `0 6px 18px ${t.primary}55` : t.shadow,
+//           cursor: 'pointer',
+//           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+//           transition: 'all 0.25s ease',
+//         }}
+//       >
+//         <span style={{ fontSize: '14px', fontWeight: '600', color: showNewsSection ? '#fff' : t.primary }}>
+//           News
+//         </span>
+//         <span style={{ fontSize: '11px', color: showNewsSection ? 'rgba(255,255,255,0.75)' : t.textMuted }}>
+//           Updates
+//         </span>
+//       </button>
+
+//       <div style={{ flex: '1 1 140px', minWidth: 0, position: 'relative' }}>
+//         <button
+//           onClick={e => { e.stopPropagation(); setShowUploadMenu(v => !v); setShowNewsSection(false) }}
+//           style={{
+//             width: '100%', padding: '14px 12px', borderRadius: '10px', border: 'none',
+//             background: showUploadMenu ? t.primaryGrad : t.surface,
+//             boxShadow: showUploadMenu ? `0 6px 18px ${t.primary}55` : t.shadow,
+//             cursor: 'pointer',
+//             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+//           }}
+//         >
+//           <span style={{ fontSize: '14px', fontWeight: '600', color: showUploadMenu ? '#fff' : t.primary }}>
+//             Documents
+//           </span>
+//           <span style={{ fontSize: '11px', color: showUploadMenu ? 'rgba(255,255,255,0.75)' : t.textMuted }}>
+//             Upload
+//           </span>
+//         </button>
+
+//         {showUploadMenu && (
+//           <div onClick={e => e.stopPropagation()} style={{
+//             position: 'absolute', top: 'calc(100% + 8px)',
+//             right: 0, left: 0,
+//             background: t.surface,
+//             borderRadius: '12px',
+//             boxShadow: t.shadowMd,
+//             padding: '8px', zIndex: 200,
+//             border: `1px solid ${t.border}`,
+//             minWidth: '160px',
+//           }}>
+//             <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: 'none' }} onChange={onSelectUploadFile} />
+//             <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={onSelectUploadFile} />
+//             {[
+//               { icon: '📄', label: 'Upload File', ref: fileInputRef },
+//               { icon: '📷', label: 'Take Photo', ref: cameraInputRef },
+//             ].map((opt, i) => (
+//               <button key={i}
+//                 onClick={() => opt.ref.current?.click()}
+//                 style={{
+//                   display: 'flex', alignItems: 'center', gap: '10px',
+//                   width: '100%', padding: '10px 12px',
+//                   borderRadius: '8px', border: 'none',
+//                   background: 'none', cursor: 'pointer', textAlign: 'left',
+//                   fontFamily: 'inherit',
+//                 }}
+//               >
+//                 <div style={{ fontWeight: '600', fontSize: '12px', color: t.text }}>{opt.label}</div>
+//               </button>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   )
+
+//   const UserCard = ({ compact = false }) => (
+//     <div style={{
+//       background: t.primaryGrad,
+//       borderRadius: '14px',
+//       padding: compact ? '16px' : '18px',
+//       position: 'relative', overflow: 'hidden',
+//       boxShadow: `0 8px 24px ${t.primary}44`,
+//     }}>
+//       <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
+//       <div style={{ position: 'absolute', bottom: '-30px', right: '50px', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
+
+//       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+//         <Avatar size={compact ? 50 : 56} />
+//         <div>
+//           <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '10px', fontWeight: '500' }}>Profile</p>
+//           <p style={{ color: '#fff', fontSize: compact ? '15px' : '16px', fontWeight: '700', letterSpacing: '-0.3px' }}>
+//             {user?.name || 'User'}
+//           </p>
+//           <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '11px', marginTop: '2px' }}>
+//             {[user?.city, user?.state].filter(Boolean).join(', ') || 'Location'}
+//           </p>
+//         </div>
+//       </div>
+//     </div>
+//   )
+
+//   if (isDesktop) {
+//     return (
+//       <div onClick={() => { setShowProfileMenu(false); setShowUploadMenu(false) }}
+//         style={{ minHeight: '100vh', background: t.pageBg, display: 'flex', flexDirection: 'column' }}>
+//         <header style={{
+//           background: t.headerBg,
+//           backdropFilter: 'blur(20px)',
+//           borderBottom: `1px solid ${t.border}`,
+//           padding: '0 40px',
+//           height: '64px',
+//           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+//           position: 'sticky', top: 0, zIndex: 100,
+//           boxShadow: t.shadow,
+//         }}>
+//           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+//             <span style={{ fontSize: '22px', fontWeight: '800' }}>DR+</span>
+//             <span style={{ fontSize: '16px', fontWeight: '700', color: t.primary }}>
+//               Dr Plus
+//             </span>
+//           </div>
+
+//           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+//             <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{
+//               width: '36px', height: '36px', borderRadius: '50%',
+//               background: t.surfaceAlt, border: `1px solid ${t.border}`,
+//               cursor: 'pointer', fontSize: '14px',
+//               display: 'flex', alignItems: 'center', justifyContent: 'center',
+//               boxShadow: t.shadow, fontWeight: '600', color: t.text,
+//             }}>
+//               {isLight ? '☀' : '☾'}
+//             </button>
+
+//             <div onClick={e => { e.stopPropagation(); setNotifications(0) }} style={{ position: 'relative', cursor: 'pointer' }}>
+//               <div style={{
+//                 width: '36px', height: '36px', borderRadius: '50%',
+//                 background: t.surfaceAlt, border: `1px solid ${t.border}`,
+//                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+//                 fontSize: '16px', boxShadow: t.shadow,
+//               }}>
+//                 🔔
+//               </div>
+//               {notifications > 0 && (
+//                 <div style={{
+//                   position: 'absolute', top: '-2px', right: '-2px',
+//                   background: '#EF4444',
+//                   color: '#fff', borderRadius: '50%',
+//                   width: '16px', height: '16px',
+//                   display: 'flex', alignItems: 'center', justifyContent: 'center',
+//                   fontSize: '9px', fontWeight: '700', border: '1.5px solid white',
+//                 }}>
+//                   {notifications}
+//                 </div>
+//               )}
+//             </div>
+
+//             <div style={{ position: 'relative' }}>
+//               <button onClick={() => setShowProfileMenu(v => !v)} style={{
+//                 display: 'flex', alignItems: 'center', gap: '8px',
+//                 background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+//               }}>
+//                 <Avatar size={36} />
+//               </button>
+
+//               {showProfileMenu && (
+//                 <div onClick={e => e.stopPropagation()} style={{
+//                   position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+//                   background: t.surface,
+//                   borderRadius: '12px',
+//                   boxShadow: t.shadowMd,
+//                   padding: '8px', zIndex: 200,
+//                   border: `1px solid ${t.border}`,
+//                   minWidth: '140px',
+//                 }}>
+//                   {[
+//                     { label: 'Profile', onClick: () => { setActiveTab('profile'); setShowProfileMenu(false) } },
+//                     { label: 'Logout', onClick: handleLogout },
+//                   ].map((item, i) => (
+//                     <button key={i} onClick={item.onClick} style={{
+//                       display: 'block', width: '100%', padding: '10px 12px',
+//                       borderRadius: '8px', border: 'none',
+//                       background: 'none', cursor: 'pointer', textAlign: 'left',
+//                       fontSize: '13px', color: t.text, fontFamily: 'inherit',
+//                       fontWeight: '500',
+//                     }}>
+//                       {item.label}
+//                     </button>
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </header>
+
+//         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+//           <nav style={{
+//             width: '200px',
+//             background: t.surface,
+//             borderRight: `1px solid ${t.border}`,
+//             padding: '20px 12px',
+//             display: 'flex', flexDirection: 'column', gap: '4px',
+//             overflowY: 'auto',
+//           }}>
+//             {[
+//               { id: 'home', label: 'Home' },
+//               { id: 'health', label: 'Health' },
+//               { id: 'hospitals', label: 'Hospitals' },
+//               { id: 'documents', label: 'Documents' },
+//             ].map(tab => (
+//               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+//                 display: 'flex', alignItems: 'center', gap: '10px',
+//                 padding: '10px 12px', borderRadius: '10px', border: 'none',
+//                 background: activeTab === tab.id ? t.navActive : 'transparent',
+//                 color: activeTab === tab.id ? t.primary : t.textSub,
+//                 fontWeight: activeTab === tab.id ? '600' : '500',
+//                 fontSize: '13px', cursor: 'pointer', textAlign: 'left',
+//                 fontFamily: 'inherit',
+//                 transition: 'all 0.15s ease',
+//               }}>
+//                 {tab.label}
+//               </button>
+//             ))}
+//           </nav>
+
+//           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+//             {activeTab === 'home' && (
+//               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+//                 <div>
+//                   <h1 style={{ fontSize: '28px', fontWeight: '700', color: t.text, marginBottom: '8px' }}>
+//                     Welcome, {user?.name?.split(' ')?.[0]}
+//                   </h1>
+//                   <p style={{ color: t.textMuted, fontSize: '13px' }}>Here's your health dashboard</p>
+//                 </div>
+
+//                 <UserCard />
+//                 <ActionRow />
+//                 <WaterIntake />
+//               </div>
+//             )}
+
+//             {activeTab === 'health' && <HealthFeatures />}
+//             {activeTab === 'hospitals' && <HospitalList />}
+//             {activeTab === 'documents' && <DocumentVault refreshKey={docRefreshKey} />}
+//             {activeTab === 'profile' && (
+//               <Card t={t}>
+//                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+//                   <Avatar size={80} />
+//                   <div>
+//                     <h2 style={{ fontSize: '20px', fontWeight: '700', color: t.text }}>{user?.name}</h2>
+//                     <p style={{ color: t.textMuted, fontSize: '12px' }}>{user?.email}</p>
+//                   </div>
+//                 </div>
+
+//                 <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: '16px', marginTop: '16px' }}>
+//                   {[
+//                     { label: 'Email', value: user?.email },
+//                     { label: 'Phone', value: user?.phone || 'Not set' },
+//                     { label: 'City', value: user?.city || 'Not set' },
+//                     { label: 'State', value: user?.state || 'Not set' },
+//                     { label: 'Age', value: user?.age || 'Not set' },
+//                     { label: 'BMI', value: user?.bmi || 'Not calculated' },
+//                   ].map((item, i) => (
+//                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${t.borderLight}` }}>
+//                       <span style={{ fontSize: '12px', color: t.textMuted }}>{item.label}</span>
+//                       <span style={{ fontSize: '13px', color: t.text, fontWeight: '500' }}>{item.value}</span>
+//                     </div>
+//                   ))}
+//                 </div>
+
+//                 <button onClick={handleLogout} style={{
+//                   width: '100%', padding: '12px',
+//                   borderRadius: '10px', border: 'none',
+//                   background: '#EF4444', color: '#fff',
+//                   fontWeight: '600', fontSize: '13px',
+//                   cursor: 'pointer', marginTop: '20px',
+//                   fontFamily: 'inherit',
+//                 }}>
+//                   Logout
+//                 </button>
+//               </Card>
+//             )}
+
+//             {showNewsSection && <NewsSection />}
+//           </div>
+//         </div>
+//       </div>
+//     )
+//   }
+
+//   // MOBILE LAYOUT
+//   return (
+//     <div onClick={() => { setShowProfileMenu(false); setShowUploadMenu(false) }}
+//       style={{ minHeight: '100vh', background: t.pageBg, display: 'flex', flexDirection: 'column', paddingBottom: '80px' }}>
+//       <header style={{
+//         background: t.headerBg,
+//         backdropFilter: 'blur(20px)',
+//         borderBottom: `1px solid ${t.border}`,
+//         padding: '12px 16px',
+//         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+//         position: 'sticky', top: 0, zIndex: 100,
+//         boxShadow: t.shadow,
+//       }}>
+//         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+//           <span style={{ fontSize: '18px', fontWeight: '800' }}>DR+</span>
+//           <span style={{ fontSize: '13px', fontWeight: '600', color: t.primary }}>
+//             Dr Plus
+//           </span>
+//         </div>
+
+//         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+//           <button onClick={e => { e.stopPropagation(); toggleTheme() }} style={{
+//             width: '32px', height: '32px', borderRadius: '50%',
+//             background: t.surfaceAlt, border: `1px solid ${t.border}`,
+//             cursor: 'pointer', fontSize: '13px',
+//             display: 'flex', alignItems: 'center', justifyContent: 'center',
+//             boxShadow: t.shadow,
+//           }}>
+//             {isLight ? '☀' : '☾'}
+//           </button>
+
+//           <div onClick={e => { e.stopPropagation(); setNotifications(0) }} style={{ position: 'relative', cursor: 'pointer' }}>
+//             <div style={{
+//               width: '32px', height: '32px', borderRadius: '50%',
+//               background: t.surfaceAlt, border: `1px solid ${t.border}`,
+//               display: 'flex', alignItems: 'center', justifyContent: 'center',
+//               fontSize: '14px', boxShadow: t.shadow,
+//             }}>
+//               🔔
+//             </div>
+//             {notifications > 0 && (
+//               <div style={{
+//                 position: 'absolute', top: '-2px', right: '-2px',
+//                 background: '#EF4444', color: '#fff', borderRadius: '50%',
+//                 width: '14px', height: '14px',
+//                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+//                 fontSize: '8px', fontWeight: '700', border: '1px solid white',
+//               }}>
+//                 {notifications}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </header>
+
+//       <div style={{ flex: 1, overflowY: 'auto', padding: '16px', paddingBottom: '24px' }}>
+//         {activeTab === 'home' && (
+//           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+//             <div>
+//               <h1 style={{ fontSize: '20px', fontWeight: '700', color: t.text, marginBottom: '4px' }}>
+//                 Hi, {user?.name?.split(' ')?.[0]}
+//               </h1>
+//               <p style={{ color: t.textMuted, fontSize: '12px' }}>Your health dashboard</p>
+//             </div>
+
+//             <UserCard compact />
+//             <ActionRow />
+//             <WaterIntake />
+//           </div>
+//         )}
+
+//         {activeTab === 'health' && <HealthFeatures />}
+//         {activeTab === 'hospitals' && <HospitalList />}
+//         {activeTab === 'documents' && <DocumentVault refreshKey={docRefreshKey} />}
+//         {activeTab === 'profile' && (
+//           <Card t={t}>
+//             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+//               <Avatar size={64} />
+//               <h2 style={{ fontSize: '16px', fontWeight: '700', color: t.text, marginTop: '12px' }}>{user?.name}</h2>
+//               <p style={{ color: t.textMuted, fontSize: '11px', marginTop: '4px' }}>{user?.email}</p>
+//             </div>
+
+//             <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: '12px', marginTop: '12px' }}>
+//               {[
+//                 { label: 'Phone', value: user?.phone || 'Not set' },
+//                 { label: 'Location', value: [user?.city, user?.state].filter(Boolean).join(', ') || 'Not set' },
+//                 { label: 'Age', value: user?.age || 'Not set' },
+//                 { label: 'BMI', value: user?.bmi || 'Not calculated' },
+//               ].map((item, i) => (
+//                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${t.borderLight}`, fontSize: '12px' }}>
+//                   <span style={{ color: t.textMuted }}>{item.label}</span>
+//                   <span style={{ color: t.text, fontWeight: '500' }}>{item.value}</span>
+//                 </div>
+//               ))}
+//             </div>
+
+//             <button onClick={handleLogout} style={{
+//               width: '100%', padding: '10px',
+//               borderRadius: '8px', border: 'none',
+//               background: '#EF4444', color: '#fff',
+//               fontWeight: '600', fontSize: '12px',
+//               cursor: 'pointer', marginTop: '16px',
+//               fontFamily: 'inherit',
+//             }}>
+//               Logout
+//             </button>
+//           </Card>
+//         )}
+
+//         {showNewsSection && <NewsSection />}
+//       </div>
+
+//       <nav style={{
+//         position: 'fixed', bottom: 0, left: 0, right: 0,
+//         background: t.surface,
+//         borderTop: `1px solid ${t.border}`,
+//         padding: '8px 0',
+//         display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+//         height: '60px',
+//         zIndex: 200,
+//         boxShadow: `0 -2px 8px ${t.border}`,
+//       }}>
+//         {[
+//           { id: 'home', label: 'Home' },
+//           { id: 'health', label: 'Health' },
+//           { id: 'hospitals', label: 'Hospital' },
+//           { id: 'documents', label: 'Docs' },
+//           { id: 'profile', label: 'Profile' },
+//         ].map(tab => (
+//           <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+//             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+//             background: activeTab === tab.id ? t.navActive : 'none',
+//             border: 'none', cursor: 'pointer',
+//             padding: '6px 12px', borderRadius: '8px',
+//             fontFamily: 'inherit',
+//             transition: 'all 0.15s ease',
+//           }}>
+//             <span style={{ fontSize: '16px', fontWeight: '600' }}>
+//               {tab.id === 'home' ? '⌂' : tab.id === 'health' ? '♥' : tab.id === 'hospitals' ? '+' : tab.id === 'documents' ? '◻' : '👤'}
+//             </span>
+//             <span style={{
+//               fontSize: '9px', fontWeight: activeTab === tab.id ? '700' : '500',
+//               color: activeTab === tab.id ? t.navActiveDot : t.textLight,
+//             }}>
+//               {tab.label}
+//             </span>
+//           </button>
+//         ))}
+//       </nav>
+//     </div>
+//   )
+// }
+
+
+
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'

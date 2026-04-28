@@ -9,6 +9,8 @@ import HospitalDetail from './pages/HospitalDetail'
 import NewsList from './pages/NewsList'
 import NewsDetail from './pages/NewsDetail'
 import DrAIWidget from './components/DrAIWidget'
+import QuickHealthDrawer from './components/QuickHealthDrawer'
+import './styles/globals.css'
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth()
@@ -25,21 +27,21 @@ export default function App() {
       <ChatProvider>
          <div style={{
            minHeight: '100vh',
-           background: 'radial-gradient(circle at top left, rgba(33,150,243,0.12), transparent 24%), radial-gradient(circle at bottom right, rgba(25,118,210,0.1), transparent 28%), #E3F2FD',
+           background: '#FFFFFF',
            display: 'flex',
            justifyContent: 'center',
-           padding: '20px 12px 24px',
+           padding: '16px 12px 20px',
            boxSizing: 'border-box',
          }}>
           <div style={{
             width: '100%',
             maxWidth: '520px',
             minHeight: '100vh',
-            background: 'rgba(255,255,255,0.98)',
-            borderRadius: '38px',
-            boxShadow: '0 40px 110px rgba(15, 23, 42, 0.14)',
+            background: 'rgba(255,255,255,0.99)',
+            borderRadius: '0px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
             overflow: 'hidden',
-            border: '1px solid rgba(15, 23, 42, 0.06)',
+            border: 'none',
             position: 'relative',
           }}>
             <Routes>
@@ -71,7 +73,8 @@ export default function App() {
                 </ProtectedRoute>
               } />
             </Routes>
-            {isDashboardRoute && <DrAIWidget />}
+            {/* DrAIWidget temporarily disabled */}
+            {/* {isDashboardRoute && <DrAIWidget />} */}
           </div>
         </div>
       </ChatProvider>

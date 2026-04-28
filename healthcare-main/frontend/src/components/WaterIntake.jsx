@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useTheme } from '../context/ThemeContext'
+import { Droplet, RotateCcw } from 'lucide-react'
 import WaterSplash3D from './WaterSplash3D'
 
 const GOAL = 2.0
@@ -82,9 +83,11 @@ export default function WaterIntake() {
              width: '38px', height: '38px', borderRadius: '12px',
              background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
              display: 'flex', alignItems: 'center', justifyContent: 'center',
-             fontSize: '20px', boxShadow: '0 4px 12px rgba(79,172,254,0.4)',
+             boxShadow: '0 4px 12px rgba(79,172,254,0.4)',
              animation: pct >= 100 ? 'icon-bounce 1s ease-in-out' : 'none',
-           }}>💧</div>
+           }}>
+             <Droplet size={20} color="white" fill="white" />
+           </div>
           <div>
             <p style={{ fontSize: '14px', fontWeight: '800', color: t.text }}>Water Intake</p>
             <p style={{ fontSize: '11px', color: t.textMuted }}>Daily hydration tracker</p>
@@ -96,7 +99,11 @@ export default function WaterIntake() {
           background: t.surfaceAlt, color: t.textSub,
           fontSize: '11px', fontWeight: '600', cursor: 'pointer',
           fontFamily: 'inherit',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
         }}>
+          <RotateCcw size={12} />
           Reset
         </button>
       </div>
