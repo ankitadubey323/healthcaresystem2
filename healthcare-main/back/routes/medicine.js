@@ -18,6 +18,6 @@ router.get('/all',         authMiddleware, getMedicines)
 router.get('/today',       authMiddleware, getTodaysMedicines)
 router.put('/dose',        authMiddleware, updateDoseLog)
 router.delete('/:id',      authMiddleware, deleteMedicine)
-router.get('/prediction',  authMiddleware, getPrediction)   // ← protect → authMiddleware
+router.get('/prediction',  authMiddleware, getPrediction)   
 
 export default router

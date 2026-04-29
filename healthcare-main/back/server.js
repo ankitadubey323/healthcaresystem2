@@ -11,6 +11,10 @@ import newsRoutes from './routes/news.js'
 import medicineRoutes from './routes/medicine.js'
 import pushRouter from './routes/push.js'
 import foodAIRoutes from './routes/foodAI.js'
+import doctorRouter from "./routes/doctor.js";
+
+
+
 
 const app = express()
 
@@ -37,6 +41,8 @@ app.use('/api/news', newsRoutes)
 app.use('/api/medicine', medicineRoutes)
 app.use('/api/push', pushRouter)
 app.use('/api/food', foodAIRoutes)
+app.use("/api/doctor", doctorRouter)
+
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'Health AI Backend Running' })
