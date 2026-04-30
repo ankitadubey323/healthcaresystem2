@@ -5,7 +5,7 @@ const pc = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
 });
 
-const index = pc.index("doctoragent");
+const index = pc.index("doctoraiagent");
 
 // ─── Embedding banao (llama-text-embed-v2) ────────────────────────
 const getEmbedding = async (text) => {
