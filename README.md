@@ -37,9 +37,9 @@ This is a separate AI chatbot that patients can talk to. The agent:
 **Email:** Resend
 
 **Deployment:** Render (both backends), kept alive using UptimeRobot
-https://healthcaresystem2-1.onrender.com ---main
-https://healthcaresystem2.onrender.com
-https://ai-agent-19hb.onrender.com
+https://healthcaresystem2-1.onrender.com ---main,
+https://healthcaresystem2.onrender.com,
+https://ai-agent-19hb.onrender.com,
 https://ai-agent-9-nnzd.onrender.com
 
 
